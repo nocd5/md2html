@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"syscall"
 )
 
 type Options struct {
@@ -119,7 +120,11 @@ func embedImage(src string) (string, error) {
 
 		f, err := os.Open(img_src)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			pathErr := err.(*os.PathError)
+			errno := pathErr.Err.(syscall.Errno)
+			if errno != 0x7B { // suppress ERROR_INVALID_NAME
+				fmt.Fprintln(os.Stderr, err)
+			}
 			continue
 		}
 		defer f.Close()
