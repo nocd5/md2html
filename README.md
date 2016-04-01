@@ -8,9 +8,13 @@ Markdown to single HTML converter
 
 ## Usage
 
-`md2html -i <input Markdown> -o <output HTML>`
+`md2html -i <input Markdown> [-o <output HTML>] [-e]`
 
 if `-o` option was abbreviated, `input Markdown file name` + `.html` will be used as output HTML file name.
+
+### Embedding images
+
+`-e/--embed` option enables embedding images that are located local storage by Base64 encoding.
 
 ## Using custom css
 
