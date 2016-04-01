@@ -20,11 +20,6 @@ const (
 <meta charset="UTF-8">
 <title>%s</title>
 %s
-<script>
-$(function() {
-	$('pre>code').each(function() { $(this.parentNode).addClass('prettyprint') }); prettyPrint();
-});
-</script>
 </head>
 <body>
 <div class="markdown-body">%s</div>
