@@ -104,8 +104,9 @@ func embedImage(src string) (string, error) {
 	dir := filepath.Dir(opts.InputFile)
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
-		if filepath.IsAbs(img_src) {
-			img_src, _ = filepath.Rel(dir, img_src)
+		img_path := img_src
+		if !filepath.IsAbs(img_src) {
+			img_path = filepath.Join(dir, img_src)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				continue
@@ -118,7 +119,7 @@ func embedImage(src string) (string, error) {
 			datatype = "image/" + ext[1:]
 		}
 
-		f, err := os.Open(img_src)
+		f, err := os.Open(img_path)
 		if err != nil {
 			pathErr := err.(*os.PathError)
 			errno := pathErr.Err.(syscall.Errno)
