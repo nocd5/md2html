@@ -39,61 +39,80 @@ const (
 		blackfriday.EXTENSION_SPACE_HEADERS
 )
 
-var opts Options
-
 func main() {
-	_, err := flags.Parse(&opts)
+	var opts Options
+	inputs, err := flags.Parse(&opts)
 	if err != nil {
 		os.Exit(1)
 	}
 
-	if len(opts.InputFile) <= 0 {
+	if len(opts.InputFile) > 0 {
+		inputs = []string{opts.InputFile}
+	}
+
+	if len(inputs) <= 0 {
 		fmt.Fprintln(os.Stderr, "Please specify input Markdown")
 		os.Exit(1)
 	}
 
-	fi, err := os.Open(opts.InputFile)
+	for _, input := range inputs {
+		files, err := filepath.Glob(input)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		if len(files) <= 0 {
+			fmt.Fprintln(os.Stderr, "File is not found")
+			os.Exit(1)
+		}
+
+		for _, file := range files {
+			output := file + ".html"
+			if len(opts.OutputFile) > 0 {
+				output = opts.OutputFile
+			}
+
+			if err := writeHtml(file, output, opts.EmbedImage); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+			}
+		}
+	}
+}
+
+func writeHtml(input, output string, embed bool) error {
+	fi, err := os.Open(input)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 	defer fi.Close()
 
 	md, err := ioutil.ReadAll(fi)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 
 	js := string(js_bytes[:len(js_bytes)])
 	css := string(css_bytes[:len(css_bytes)])
 	html := string(blackfriday.MarkdownCommon([]byte(md)))
 
-	if opts.EmbedImage {
-		html, err = embedImage(html)
+	if embed {
+		html, err = embedImage(html, filepath.Dir(input))
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			fmt.Fprintln(os.Stderr, "Embedding image is failed.")
-			os.Exit(1)
+			return err
 		}
 	}
 
-	output_name := opts.InputFile + ".html"
-	if len(opts.OutputFile) > 0 {
-		output_name = opts.OutputFile
-	}
-
-	fo, err := os.Create(output_name)
+	fo, err := os.Create(output)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 	defer fo.Close()
 
-	fmt.Fprintf(fo, template, opts.InputFile, js+"\n"+css, html)
+	fmt.Fprintf(fo, template, input, js+"\n"+css, html)
+	return nil
 }
 
-func embedImage(src string) (string, error) {
+func embedImage(src, parent string) (string, error) {
 	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]+?/>)`)
 	if err != nil {
 		return src, err
@@ -101,12 +120,11 @@ func embedImage(src string) (string, error) {
 	img_tags := re_find.FindAllString(src, -1)
 
 	dest := src
-	dir := filepath.Dir(opts.InputFile)
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
 		img_path := img_src
 		if !filepath.IsAbs(img_src) {
-			img_path = filepath.Join(dir, img_src)
+			img_path = filepath.Join(parent, img_src)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				continue
