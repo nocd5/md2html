@@ -66,14 +66,15 @@ func main() {
 			os.Exit(1)
 		}
 
-		for _, file := range files {
-			output := file + ".html"
-			if len(opts.OutputFile) > 0 {
-				output = opts.OutputFile
-			}
-
-			if err := writeHtml(file, output, opts.EmbedImage); err != nil {
+		if len(opts.OutputFile) > 0 {
+			if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage); err != nil {
 				fmt.Fprintln(os.Stderr, err)
+			}
+		} else {
+			for _, file := range files {
+				if err := writeHtml(file, file+".html", opts.EmbedImage); err != nil {
+					fmt.Fprintln(os.Stderr, err)
+				}
 			}
 		}
 	}
@@ -109,6 +110,47 @@ func writeHtml(input, output string, embed bool) error {
 	defer fo.Close()
 
 	fmt.Fprintf(fo, template, input, js+"\n"+css, html)
+	return nil
+}
+
+func writeHtmlConcat(inputs []string, output string, embed bool) error {
+	js := string(js_bytes[:len(js_bytes)])
+	css := string(css_bytes[:len(css_bytes)])
+	html := ""
+
+	for _, input := range inputs {
+		fi, err := os.Open(input)
+		if err != nil {
+			return err
+		}
+		defer fi.Close()
+
+		md, err := ioutil.ReadAll(fi)
+		if err != nil {
+			return err
+		}
+
+		h := string(blackfriday.MarkdownCommon(md))
+
+		if embed {
+			h, err = embedImage(h, filepath.Dir(input))
+			if err != nil {
+				return err
+			}
+		}
+
+		html += h
+	}
+
+	fo, err := os.Create(output)
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+
+	re := regexp.MustCompile(filepath.Ext(output) + "$")
+	title := filepath.Base(re.ReplaceAllString(output, ""))
+	fmt.Fprintf(fo, template, title, js+"\n"+css, html)
 	return nil
 }
 
