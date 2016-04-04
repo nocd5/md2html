@@ -93,7 +93,7 @@ func writeHtml(input, output string, embed bool) error {
 
 	js := string(js_bytes[:len(js_bytes)])
 	css := string(css_bytes[:len(css_bytes)])
-	html := string(blackfriday.MarkdownCommon([]byte(md)))
+	html := string(blackfriday.MarkdownCommon(md))
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
