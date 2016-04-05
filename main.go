@@ -6,6 +6,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/russross/blackfriday"
 	"io/ioutil"
+	"mime"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -173,12 +174,6 @@ func embedImage(src, parent string) (string, error) {
 			}
 		}
 
-		datatype := "imgae"
-		ext := filepath.Ext(img_src)
-		if len(ext) > 0 {
-			datatype = "image/" + ext[1:]
-		}
-
 		f, err := os.Open(img_path)
 		if err != nil {
 			pathErr := err.(*os.PathError)
@@ -201,7 +196,13 @@ func embedImage(src, parent string) (string, error) {
 		if err != nil {
 			return src, err
 		}
-		dest = re_replace.ReplaceAllString(dest, "${1}data:"+datatype+";base64,"+b64img+"${2}")
+
+		ext := filepath.Ext(img_src)
+		mime_type := mime.TypeByExtension(ext)
+		if len(mime_type) <= 0 {
+			mime_type = "image"
+		}
+		dest = re_replace.ReplaceAllString(dest, "${1}data:"+mime_type+";base64,"+b64img+"${2}")
 	}
 	return dest, nil
 }
