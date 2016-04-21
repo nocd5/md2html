@@ -1,1 +1,1 @@
-$(function(){$('pre>code').each(function(){ $(this.parentNode).addClass('prettyprint')});prettyPrint();});
+$(function(){$('pre>code').each(function(){ $(this.parentNode).addClass('prettyprint')});window.onload=prettyPrint;});
