@@ -17,6 +17,7 @@ type Options struct {
 	InputFile  string `long:"input" short:"i" description:"input Markdown"`
 	OutputFile string `long:"output" short:"o" description:"output HTML"`
 	EmbedImage bool   `long:"embed" short:"e" description:"embed image by base64 encoding"`
+	TOC        bool   `long:"toc" short:"t" description:"generate TOC"`
 }
 
 const (
@@ -28,16 +29,44 @@ const (
 %s
 </head>
 <body>
-<div class="markdown-body">%s</div>
+<div class="markdown-body">
+%s
+</div>
 </body>
 </html>`
 
-	extensions = blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
+	template_toc = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>%s</title>
+%s
+</head>
+<body>
+<div id="markdown-toc"></div>
+<div class="markdown-body">
+%s
+</div>
+</body>
+</html>`
+
+	commonHtmlFlags = 0 |
+		blackfriday.HTML_USE_XHTML |
+		blackfriday.HTML_USE_SMARTYPANTS |
+		blackfriday.HTML_SMARTYPANTS_FRACTIONS |
+		blackfriday.HTML_SMARTYPANTS_DASHES |
+		blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
+
+	extensions = 0 |
+		blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
 		blackfriday.EXTENSION_TABLES |
 		blackfriday.EXTENSION_FENCED_CODE |
 		blackfriday.EXTENSION_AUTOLINK |
 		blackfriday.EXTENSION_STRIKETHROUGH |
-		blackfriday.EXTENSION_SPACE_HEADERS
+		blackfriday.EXTENSION_AUTO_HEADER_IDS |
+		blackfriday.EXTENSION_HEADER_IDS |
+		blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
+		blackfriday.EXTENSION_DEFINITION_LISTS
 )
 
 func main() {
@@ -56,32 +85,34 @@ func main() {
 		os.Exit(1)
 	}
 
+	var files []string
 	for _, input := range inputs {
-		files, err := filepath.Glob(input)
+		f, err := filepath.Glob(input)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		if len(files) <= 0 {
-			fmt.Fprintln(os.Stderr, "File is not found")
-			os.Exit(1)
-		}
+		files = append(files, f...)
+	}
+	if len(files) <= 0 {
+		fmt.Fprintln(os.Stderr, "File is not found")
+		os.Exit(1)
+	}
 
-		if len(opts.OutputFile) > 0 {
-			if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage); err != nil {
+	if len(opts.OutputFile) > 0 {
+		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	} else {
+		for _, file := range files {
+			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC); err != nil {
 				fmt.Fprintln(os.Stderr, err)
-			}
-		} else {
-			for _, file := range files {
-				if err := writeHtml(file, file+".html", opts.EmbedImage); err != nil {
-					fmt.Fprintln(os.Stderr, err)
-				}
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed bool) error {
+func writeHtml(input, output string, embed bool, toc bool) error {
 	fi, err := os.Open(input)
 	if err != nil {
 		return err
@@ -95,7 +126,8 @@ func writeHtml(input, output string, embed bool) error {
 
 	js := string(js_bytes[:len(js_bytes)])
 	css := string(css_bytes[:len(css_bytes)])
-	html := string(blackfriday.MarkdownCommon(md))
+	renderer := blackfriday.HtmlRenderer(commonHtmlFlags, "", "")
+	html := string(blackfriday.Markdown(md, renderer, extensions))
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
@@ -110,15 +142,21 @@ func writeHtml(input, output string, embed bool) error {
 	}
 	defer fo.Close()
 
-	fmt.Fprintf(fo, template, input, js+"\n"+css, html)
+	if toc {
+		fmt.Fprintf(fo, template_toc, input, js+"\n"+css, html)
+	} else {
+
+		fmt.Fprintf(fo, template, input, js+"\n"+css, html)
+	}
 	return nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed bool) error {
+func writeHtmlConcat(inputs []string, output string, embed bool, toc bool) error {
 	js := string(js_bytes[:len(js_bytes)])
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""
 
+	renderer := blackfriday.HtmlRenderer(commonHtmlFlags, "", "")
 	for _, input := range inputs {
 		fi, err := os.Open(input)
 		if err != nil {
@@ -131,7 +169,7 @@ func writeHtmlConcat(inputs []string, output string, embed bool) error {
 			return err
 		}
 
-		h := string(blackfriday.MarkdownCommon(md))
+		h := string(blackfriday.Markdown(md, renderer, extensions))
 
 		if embed {
 			h, err = embedImage(h, filepath.Dir(input))
@@ -151,12 +189,16 @@ func writeHtmlConcat(inputs []string, output string, embed bool) error {
 
 	re := regexp.MustCompile(filepath.Ext(output) + "$")
 	title := filepath.Base(re.ReplaceAllString(output, ""))
-	fmt.Fprintf(fo, template, title, js+"\n"+css, html)
+	if toc {
+		fmt.Fprintf(fo, template_toc, title, js+"\n"+css, html)
+	} else {
+		fmt.Fprintf(fo, template, title, js+"\n"+css, html)
+	}
 	return nil
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]+?/>)`)
+	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
@@ -192,7 +234,7 @@ func embedImage(src, parent string) (string, error) {
 		}
 
 		b64img := base64.StdEncoding.EncodeToString(d)
-		re_replace, err := regexp.Compile(`(<img[\S\s]+?src=")` + regexp.QuoteMeta(img_src) + `("[\S\s]+?/>)`)
+		re_replace, err := regexp.Compile(`(<img[\S\s]+?src=")` + regexp.QuoteMeta(img_src) + `("[\S\s]*?/?>)`)
 		if err != nil {
 			return src, err
 		}

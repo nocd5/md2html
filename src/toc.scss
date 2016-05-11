@@ -1,0 +1,53 @@
+$color-bg: #333;
+$color-fg: #fff;
+$color-active: #4078c0;
+$color-hover: #444;
+
+$toc-shiftwidth: 1em;
+$toc-lineheight: 2;
+
+#markdown-toc {
+    position: fixed;
+    overflow-y: auto;
+    color: $color-fg;
+    background: $color-bg;
+    width: 20%;
+    min-width: 200px;
+    height: 100%;
+    z-index: 255;
+    box-shadow: 0 0 5px 0 #000;
+}
+
+#markdown-toc ul {
+    padding: 0;
+    list-style: none;
+}
+
+#markdown-toc a {
+    color: $color-fg;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    line-height: $toc-lineheight;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#markdown-toc [class*="toc-h"]:hover {
+    background: $color-hover;
+}
+
+#markdown-toc [class*="toc-h"].toc-active {
+    background: $color-active;
+}
+
+@for $i from 1 through 4 {
+    #markdown-toc .toc-h#{$i} {
+        font-size: #{1em - ($i - 1)/16};
+    }
+    #markdown-toc .toc-h#{$i} > :before {
+        content: "";
+        padding-left: #{$toc-shiftwidth * $i};
+    }
+}
