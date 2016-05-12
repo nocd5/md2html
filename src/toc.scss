@@ -18,38 +18,39 @@ $toc-lineheight: 2;
     height: 100%;
     z-index: 255;
     box-shadow: 0 0 5px 0 #000;
-}
 
-#markdown-toc ul {
-    padding: 0;
-    list-style: none;
-}
-
-#markdown-toc a {
-    color: $color-fg;
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    line-height: $toc-lineheight;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#markdown-toc [class*="toc-h"]:hover {
-    background: $color-hover;
-}
-
-#markdown-toc [class*="toc-h"].toc-active {
-    background: $color-active;
-}
-
-@for $i from 1 through 4 {
-    #markdown-toc .toc-h#{$i} {
-        font-size: #{1em - ($i - 1)/16};
+    ul {
+        padding: 0;
+        list-style: none;
     }
-    #markdown-toc .toc-h#{$i} > :before {
-        content: "";
-        padding-left: #{$toc-shiftwidth * $i};
+
+    a {
+        color: $color-fg;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        line-height: $toc-lineheight;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    [class*="toc-h"] {
+        &:hover {
+            background: $color-hover;
+        }
+        &.toc-active {
+            background: $color-active;
+        }
+    }
+
+    @for $i from 1 through 4 {
+        .toc-h#{$i} {
+            font-size: #{1em - ($i - 1)/16};
+            :before {
+                content: "";
+                padding-left: #{$toc-shiftwidth * $i};
+            }
+        }
     }
 }
