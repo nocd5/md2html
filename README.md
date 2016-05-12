@@ -1,6 +1,12 @@
 # md2html
 
-Markdown to single HTML converter
+Markdown to single HTML converter.
+
+## Feature
+
+The **md2html** converts Markdown to a single file HTML.
+All scripts and css will be embeded in the file and thus the converted file is viewable even offline.
+Additionally, the **md2html** has option to embed image to HTML by base64 encode and hence the file is conveyable without any resources.
 
 ## Installation
 
