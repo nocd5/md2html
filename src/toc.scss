@@ -3,6 +3,8 @@ $color-fg: #fff;
 $color-active: #4078c0;
 $color-hover: #444;
 
+$toc-width: 20%;
+$toc-minwidth: 200px;
 $toc-shiftwidth: 1em;
 $toc-lineheight: 2;
 
@@ -11,8 +13,8 @@ $toc-lineheight: 2;
     overflow-y: auto;
     color: $color-fg;
     background: $color-bg;
-    width: 20%;
-    min-width: 200px;
+    width: $toc-width;
+    min-width: $toc-minwidth;
     height: 100%;
     z-index: 255;
     box-shadow: 0 0 5px 0 #000;
