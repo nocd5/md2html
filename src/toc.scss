@@ -1,12 +1,4 @@
-$color-bg: #333;
-$color-fg: #fff;
-$color-active: #4078c0;
-$color-hover: #444;
-
-$toc-width: 20%;
-$toc-minwidth: 200px;
-$toc-shiftwidth: 1em;
-$toc-lineheight: 2;
+@import 'config.scss';
 
 #markdown-toc {
     position: fixed;
@@ -16,7 +8,7 @@ $toc-lineheight: 2;
     width: $toc-width;
     min-width: $toc-minwidth;
     height: 100%;
-    z-index: 255;
+    padding-top: $toc-shiftwidth;
     box-shadow: 0 0 5px 0 #000;
 
     ul {
@@ -49,8 +41,39 @@ $toc-lineheight: 2;
             font-size: #{1em - ($i - 1)/16};
             :before {
                 content: "";
-                padding-left: #{$toc-shiftwidth * $i};
+                padding-left: calc(#{$toc-shiftwidth * $i} + #{$button-size});
             }
         }
+    }
+}
+
+.toc-button {
+    position: fixed;
+    top: $button-size/2;
+    margin-left: $button-size/2;
+    width: $button-size;
+    height: $button-size;
+    border-radius: 50%;
+    background: $button-color-bg;
+    cursor: pointer;
+    &:before, &:after {
+        transform: rotate(45deg);
+        display: block;
+        position: absolute;
+        content: '';
+        background-color: $color-fg;
+        border-radius: $button-size/8;
+    }
+    &:before {
+        width: $button-size/8 * 6;
+        height: $button-size/8;
+        top: $button-size/2 - $button-size/16;
+        left: $button-size/8;
+    }
+    &:after {
+        width: $button-size/8;
+        height: $button-size/8 * 6;
+        top: $button-size/8;
+        left: $button-size/2 - $button-size/16;
     }
 }
