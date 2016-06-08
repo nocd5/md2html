@@ -2,8 +2,9 @@ var gulp = require('gulp');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
-var jsonSass = require('gulp-json-sass');
 var cleanCss = require('gulp-clean-css');
+var jsonTransform = require('gulp-json-transform');
+var jsonSass = require('gulp-json-sass');
 
 var paths = {
   'src': './src/',
@@ -21,7 +22,20 @@ gulp.task('js', function() {
     .pipe(gulp.dest(paths.css));
 });
 
-gulp.task('json', function() {
+gulp.task('json2js', function() {
+  jsonObjectName = "";
+  return gulp.src(paths.src + '**/*.json')
+    .pipe(rename(function(path) {
+        jsonObjectName = path.basename;
+        path.extname = '.js';
+    }))
+    .pipe(jsonTransform(function(data) {
+        return jsonObjectName + '=' + JSON.stringify(data);
+    }))
+    .pipe(gulp.dest(paths.js));
+});
+
+gulp.task('json2sass', function() {
   return gulp.src(paths.src + '**/*.json')
     .pipe(jsonSass({
         delim: '-',
@@ -31,11 +45,11 @@ gulp.task('json', function() {
         prefixFirstNumericCharacter: true,
         firstCharacter: '_'
     }))
-    .pipe(rename({ extname: '.scss' }))
+    .pipe(rename({ extname: '.sass' }))
     .pipe(gulp.dest(paths.src));
 });
 
-gulp.task('scss', function() {
+gulp.task('scss', ['json2sass'], function() {
   return gulp.src(paths.src + '**/*.scss')
     .pipe(sass({ includePaths: paths.src }))
     .on('error', function(err) {
@@ -59,4 +73,4 @@ gulp.task('css', function() {
     .pipe(gulp.dest(paths.css));
 });
 
-gulp.task('default', ['js', 'json', 'scss', 'css']);
+gulp.task('default', ['js', 'css', 'scss', 'json2js', 'json2sass']);

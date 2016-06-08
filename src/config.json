@@ -12,10 +12,10 @@
     "lineheight": 2
   },
   "button": {
-    "size": "16px",
+    "size": "1em",
     "color": {
       "bg": "#f66",
-      "active": "#4b3"
+      "active": "#5c4"
     },
     "duration": 500
   }

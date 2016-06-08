@@ -1,4 +1,4 @@
-@import 'config.scss';
+@import 'config';
 
 #markdown-toc {
     position: fixed;
@@ -10,12 +10,10 @@
     height: 100%;
     padding-top: $toc-shiftwidth;
     box-shadow: 0 0 5px 0 #000;
-
     ul {
         padding: 0;
         list-style: none;
     }
-
     a {
         color: $color-fg;
         text-decoration: none;
@@ -26,7 +24,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
     [class*="toc-h"] {
         &:hover {
             background: $color-hover;
@@ -34,13 +31,14 @@
         &.toc-active {
             background: $color-active;
         }
+        :before {
+            content: "";
+        }
     }
-
     @for $i from 1 through 4 {
         .toc-h#{$i} {
             font-size: #{1em - ($i - 1)/16};
             :before {
-                content: "";
                 padding-left: calc(#{$toc-shiftwidth * $i} + #{$button-size});
             }
         }
@@ -56,24 +54,24 @@
     border-radius: 50%;
     background: $button-color-bg;
     cursor: pointer;
+    transition: transform #{$button-duration/1000 + 's'} linear;
     &:before, &:after {
-        transform: rotate(45deg);
-        display: block;
+        transform: rotate(-45deg);
         position: absolute;
-        content: '';
         background-color: $color-fg;
-        border-radius: $button-size/8;
+        border-radius: $button-size;
+        content: "";
     }
     &:before {
-        width: $button-size/8 * 6;
-        height: $button-size/8;
-        top: $button-size/2 - $button-size/16;
-        left: $button-size/8;
+        width: 75%;
+        height: 12.5%;
+        top: 43.75%;
+        left: 12.5%;
     }
     &:after {
-        width: $button-size/8;
-        height: $button-size/8 * 6;
-        top: $button-size/8;
-        left: $button-size/2 - $button-size/16;
+        width: 12.5%;
+        height: 75%;
+        top: 12.5%;
+        left: 43.75%;
     }
 }
