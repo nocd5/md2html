@@ -20,6 +20,7 @@ before_build:
 build_script:
 - cmd: >-
     go get -d github.com/nocd5/md2html
+
     go build
 after_build:
 - cmd: >-
