@@ -1,0 +1,29 @@
+version: 1.0.{build}
+branches:
+  except:
+  - gh-pages
+clone_folder: C:\Users\appveyor\md2html
+environment:
+  GOPATH: C:\gopath
+  matrix:
+  - GOOS: windows
+    GOARCH: 386
+  - GOOS: windows
+    GOARCH: amd64
+  - GOOS: linux
+    GOARCH: 386
+  - GOOS: linux
+    GOARCH: amd64
+before_build:
+- cmd: >-
+    go env
+build_script:
+- cmd: >-
+    go get -d github.com/nocd5/md2html
+    go build
+after_build:
+- cmd: >-
+    7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
+artifacts:
+- path: md2html_$(GOOS)_$(GOARCH).zip
+  name: md2html
