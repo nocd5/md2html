@@ -1,6 +1,6 @@
 # md2html
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vvq8grrjy07sfxq9/branch/appveyor_debug?svg=true)](https://ci.appveyor.com/project/nocd5/md2html/branch/appveyor_debug)
+[![Build status](https://ci.appveyor.com/api/projects/status/vvq8grrjy07sfxq9/branch/master?svg=true)](https://ci.appveyor.com/project/nocd5/md2html/branch/master)
 
 Markdown to single HTML converter.
 
