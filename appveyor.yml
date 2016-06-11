@@ -2,6 +2,7 @@ version: '{branch}_1.0.{build}'
 branches:
   except:
   - gh-pages
+skip_tags: true
 clone_folder: C:\Users\appveyor\md2html
 environment:
   GOPATH: C:\gopath
@@ -35,4 +36,4 @@ deploy:
   auth_token:
     secure: msXREOrf813FAzkJvvU5/QyYe/ZKzMQhMx9Zv3XD7NAHHAR+Zf1ueMDi6MsQmFlt
   artifact: md2html_$(GOOS)_$(GOARCH).zip
-  draft: false
+  draft: true
