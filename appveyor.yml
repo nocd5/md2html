@@ -24,6 +24,8 @@ build_script:
     go build
 after_build:
 - cmd: >-
+    for /f "usebackq" %e in (`go env GOEXE`) do @set GOEXE=%e
+
     7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
 artifacts:
 - path: md2html_$(GOOS)_$(GOARCH).zip
