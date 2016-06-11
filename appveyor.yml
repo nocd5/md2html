@@ -30,3 +30,9 @@ after_build:
 artifacts:
 - path: md2html_$(GOOS)_$(GOARCH).zip
   name: md2html
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: msXREOrf813FAzkJvvU5/QyYe/ZKzMQhMx9Zv3XD7NAHHAR+Zf1ueMDi6MsQmFlt
+  artifact: md2html_$(GOOS)_$(GOARCH).zip
+  draft: false
