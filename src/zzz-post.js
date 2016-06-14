@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // TOC toggle button
     var option = {
-      duration: config.button.duration,
-      step: function() {
-        body.style.marginLeft = toc.offsetWidth + 'px';
-      }
+        duration: config.button.duration,
+        step: function() {
+            body.style.marginLeft = toc.offsetWidth + 'px';
+        }
     };
     $(button).click(function() {
         if (toc.offsetWidth > 0) {
