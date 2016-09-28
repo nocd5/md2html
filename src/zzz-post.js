@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 background: config.button.color.active,
                 transform: 'rotate(-45deg)'
             });
+            $(toc).css({ overflowY: 'hidden' });
             $(toc).animate({ width: '0', minWidth: '0' }, option);
         }
         else {
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 background: config.button.color.bg,
                 transform: 'rotate(0)'
             });
+            $(toc).css({ overflowY: 'auto' });
             $(toc).animate({ width: config.toc.width, minWidth: config.toc.minwidth }, option);
         }
     });
