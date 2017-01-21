@@ -129,6 +129,7 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 
 	js := string(js_bytes[:len(js_bytes)])
 	if mathjax {
+		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
@@ -159,6 +160,7 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) error {
 	js := string(js_bytes[:len(js_bytes)])
 	if mathjax {
+		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
