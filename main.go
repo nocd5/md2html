@@ -18,6 +18,7 @@ type Options struct {
 	OutputFile string `long:"output" short:"o" description:"output HTML"`
 	EmbedImage bool   `long:"embed" short:"e" description:"embed image by base64 encoding"`
 	TOC        bool   `long:"toc" short:"t" description:"generate TOC"`
+	MathJax    bool   `long:"mathjax" short:"m" description:"use MathJax"`
 }
 
 const (
@@ -102,19 +103,19 @@ func main() {
 	}
 
 	if len(opts.OutputFile) > 0 {
-		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC); err != nil {
+		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
 		for _, file := range files {
-			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC); err != nil {
+			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed bool, toc bool) error {
+func writeHtml(input, output string, embed, toc, mathjax bool) error {
 	fi, err := os.Open(input)
 	if err != nil {
 		return err
@@ -127,6 +128,9 @@ func writeHtml(input, output string, embed bool, toc bool) error {
 	}
 
 	js := string(js_bytes[:len(js_bytes)])
+	if mathjax {
+		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
 	css := string(css_bytes[:len(css_bytes)])
 	renderer := blackfriday.HtmlRenderer(commonHtmlFlags, "", "")
 	html := string(blackfriday.Markdown(md, renderer, extensions))
@@ -147,14 +151,16 @@ func writeHtml(input, output string, embed bool, toc bool) error {
 	if toc {
 		fmt.Fprintf(fo, template_toc, input, js+"\n"+css, html)
 	} else {
-
 		fmt.Fprintf(fo, template, input, js+"\n"+css, html)
 	}
 	return nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed bool, toc bool) error {
+func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) error {
 	js := string(js_bytes[:len(js_bytes)])
+	if mathjax {
+		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""
 
