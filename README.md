@@ -40,6 +40,10 @@ if `-o` option was abbreviated, `input Markdown file name` + `.html` will be use
 
 `-t/--toc` option enables generating TOC.
 
+### Using MathJax
+
+`-m/--mathjax` option enables using MathJax.
+
 ## Example
 
 Please execute the following commands to make example files.
@@ -79,8 +83,13 @@ $ go install
 #### JS
 
 - [PrismJS/prism](https://github.com/PrismJS/prism)
+  ([License](https://raw.githubusercontent.com/PrismJS/prism/master/LICENSE))
 - [jquery/jquery](https://github.com/jquery/jquery)
+  ([License](https://raw.githubusercontent.com/jquery/jquery/master/LICENSE.txt))
 - [jgallen23/toc](https://github.com/jgallen23/toc)
+  ([License](https://raw.githubusercontent.com/jgallen23/toc/master/LICENSE))
+- [pkra/MathJax-single-file](https://github.com/pkra/MathJax-single-file)
+  ([License](https://raw.githubusercontent.com/pkra/MathJax-single-file/master/LICENSE))
 
 ## Acknowledgement
 
