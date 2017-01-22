@@ -76,9 +76,9 @@ $ go install
 #### Go
 
 - [jessevdk/go-flags](https://github.com/jessevdk/go-flags)
+  ([License](https://github.com/jessevdk/go-flags/blob/master/LICENSE))
 - [russross/blackfriday](https://github.com/russross/blackfriday)
-    - Fork and implement GFM like task list  
-      [nocd5/blackfriday](https://github.com/nocd5/blackfriday)
+  ([License](https://github.com/russross/blackfriday/blob/master/LICENSE.txt))
 
 #### JS
 

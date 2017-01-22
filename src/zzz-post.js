@@ -48,4 +48,28 @@ document.addEventListener('DOMContentLoaded', function() {
             $(toc).animate({ width: config.toc.width, minWidth: config.toc.minwidth }, option);
         }
     });
+
+    // CheckBox
+    var list = document.getElementsByTagName('LI');
+    for (i = 0; i < list.length; i++) {
+        for (j = 0; j < list[i].childNodes.length; j++) {
+            if (list[i].childNodes[j].nodeName == '#text') {
+                if (list[i].childNodes[j].data.substr(0,3) == "[ ]") {
+                    var checkbox = document.createElement('input');
+                    checkbox.type = "checkbox"
+                    list[i].childNodes[j].data = list[i].childNodes[j].data.substr(3)
+                    list[i].insertBefore(checkbox, list[i].childNodes[0]);
+                    list[i].classList.add('task-list-item')
+                }
+                else if (list[i].childNodes[j].data.substr(0,3) == "[x]") {
+                    var checkbox = document.createElement('input');
+                    checkbox.type = "checkbox"
+                    checkbox.checked = "checked"
+                    list[i].childNodes[j].data = list[i].childNodes[j].data.substr(3)
+                    list[i].insertBefore(checkbox, list[i].childNodes[0]);
+                    list[i].classList.add('task-list-item')
+                }
+            }
+        }
+    }
 }, false);

@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/jessevdk/go-flags"
-	"github.com/nocd5/blackfriday"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"mime"
 	"os"
