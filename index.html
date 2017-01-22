@@ -25,7 +25,7 @@ important:/\b(?:always_latch|always_comb|always_ff|always)\b ?@?/,number:/\B##?\
 !function(t,e){e.fn.smoothScroller=function(o){o=e.extend({},e.fn.smoothScroller.defaults,o);var r=e(this),l=r.attr("id"),n=t.history&&t.history.pushState;return l.length&&n&&t.history.pushState(null,null,"#"+l),e(o.scrollEl).animate({scrollTop:r.offset().top-e(o.scrollEl).offset().top-o.offset},o.speed,o.ease).promise().done(function(){var t=r.attr("id");t.length&&!n&&(document.location.hash=t),r.trigger("smoothScrollerComplete")}),this},e.fn.smoothScroller.defaults={speed:400,ease:"swing",scrollEl:"body,html",offset:0},e("body").on("click","[data-smoothscroller]",function(t){t.preventDefault();var o=e(this).attr("href");0===o.indexOf("#")&&e(o).smoothScroller()})}(window,jQuery),function(t){var e={};t.fn.toc=function(e){var o,r=this,l=t.extend({},jQuery.fn.toc.defaults,e),n=t(l.container),i=t(l.selectors,n),s=[],a=l.activeClass,c=function(e,o){if(l.smoothScrolling&&"function"==typeof l.smoothScrolling){e.preventDefault();var n=t(e.target).attr("href");l.smoothScrolling(n,l,o)}t("li",r).removeClass(a),t(e.target).parent().addClass(a)},f=function(e){o&&clearTimeout(o),o=setTimeout(function(){for(var e,o=t(window).scrollTop(),n=Number.MAX_VALUE,i=0,c=0,f=s.length;c<f;c++){var h=Math.abs(s[c]-o);h<n&&(i=c,n=h)}t("li",r).removeClass(a),e=t("li:eq("+i+")",r).addClass(a),l.onHighlight(e)},50)};return l.highlightOnScroll&&(t(window).bind("scroll",f),f()),this.each(function(){var e=t(this),o=t(l.listType);i.each(function(r,n){var i=t(n);s.push(i.offset().top-l.highlightOffset);var a=l.anchorName(r,n,l.prefix);if(n.id!==a){t("<span/>").attr("id",a).insertBefore(i)}var h=t("<a/>").text(l.headerText(r,n,i)).attr("href","#"+a).bind("click",function(o){l.highlightOnScroll&&t(window).unbind("scroll",f),c(o,function(){setTimeout(function(){l.highlightOnScroll&&t(window).bind("scroll",f)},50)}),e.trigger("selected",t(this).attr("href"))}),u=t("<li/>").addClass(l.itemClass(r,n,i,l.prefix)).append(h);o.append(u)}),e.html(o)})},jQuery.fn.toc.defaults={container:"body",listType:"<ul/>",selectors:"h1,h2,h3",smoothScrolling:function(e,o,r){t(e).smoothScroller({offset:o.scrollToOffset}).on("smoothScrollerComplete",function(){r()})},scrollToOffset:0,prefix:"toc",activeClass:"toc-active",onHighlight:function(){},highlightOnScroll:!0,highlightOffset:100,anchorName:function(o,r,l){if(r.id.length)return r.id;var n=t(r).text().replace(/[^a-z0-9]/gi," ").replace(/\s+/g,"-").toLowerCase();if(e[n]){for(var i=2;e[n+i];)i++;n=n+"-"+i}return e[n]=!0,l+"-"+n},headerText:function(t,e,o){return o.text()},itemClass:function(t,e,o,r){return r+"-"+o[0].tagName.toLowerCase()}}}(jQuery);
 </script>
 <script type="text/javascript">
-document.addEventListener("DOMContentLoaded",function(){if(null!=document.getElementById("markdown-toc")){var t,o,n,e;document.body.innerHTML=document.body.innerHTML+'<div class="toc-button"></div>',e=document.getElementsByClassName("toc-button")[0],t=document.getElementsByClassName("markdown-body")[0],o=document.getElementById("markdown-toc"),o.innerHTML='<div class="scroll">'+o.innerHTML+"</div>",n=document.querySelector("#markdown-toc > .scroll"),$(n).toc({selectors:"h1,h2,h3,h4",highlightOffset:0}),o.style.direction="rtl",n.style.direction="ltr",window.onload=window.onresize=function(){t.style.marginLeft=o.offsetWidth+"px"};var i={duration:config.button.duration,step:function(){t.style.marginLeft=o.offsetWidth+"px"}};$(e).click(function(){o.offsetWidth>0?($(e).css({background:config.button.color.active,transform:"rotate(-45deg)"}),$(o).css({overflowY:"hidden"}),$(o).animate({width:"0",minWidth:"0"},i)):($(e).css({background:config.button.color.bg,transform:"rotate(0)"}),$(o).css({overflowY:"auto"}),$(o).animate({width:config.toc.width,minWidth:config.toc.minwidth},i))})}},!1);
+document.addEventListener("DOMContentLoaded",function(){if(null!=document.getElementById("markdown-toc")){var t,e,o,d;document.body.innerHTML=document.body.innerHTML+'<div class="toc-button"></div>',d=document.getElementsByClassName("toc-button")[0],t=document.getElementsByClassName("markdown-body")[0],e=document.getElementById("markdown-toc"),e.innerHTML='<div class="scroll">'+e.innerHTML+"</div>",o=document.querySelector("#markdown-toc > .scroll"),$(o).toc({selectors:"h1,h2,h3,h4",highlightOffset:0}),e.style.direction="rtl",o.style.direction="ltr",window.onload=window.onresize=function(){t.style.marginLeft=e.offsetWidth+"px"};var n={duration:config.button.duration,step:function(){t.style.marginLeft=e.offsetWidth+"px"}};$(d).click(function(){e.offsetWidth>0?($(d).css({background:config.button.color.active,transform:"rotate(-45deg)"}),$(e).css({overflowY:"hidden"}),$(e).animate({width:"0",minWidth:"0"},n)):($(d).css({background:config.button.color.bg,transform:"rotate(0)"}),$(e).css({overflowY:"auto"}),$(e).animate({width:config.toc.width,minWidth:config.toc.minwidth},n))});var c=document.getElementsByTagName("LI");for(i=0;i<c.length;i++)for(j=0;j<c[i].childNodes.length;j++)if("#text"==c[i].childNodes[j].nodeName)if("[ ]"==c[i].childNodes[j].data.substr(0,3)){var s=document.createElement("input");s.type="checkbox",c[i].childNodes[j].data=c[i].childNodes[j].data.substr(3),c[i].insertBefore(s,c[i].childNodes[0]),c[i].classList.add("task-list-item")}else if("[x]"==c[i].childNodes[j].data.substr(0,3)){var s=document.createElement("input");s.type="checkbox",s.checked="checked",c[i].childNodes[j].data=c[i].childNodes[j].data.substr(3),c[i].insertBefore(s,c[i].childNodes[0]),c[i].classList.add("task-list-item")}}},!1);
 </script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({tex2jax:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]]}});
@@ -240,43 +240,34 @@ func main() {
 </code></pre>
 <h1 id="task-list-sample">Task List Sample</h1>
 
-<ul><li class="task-list-item">
-<input type="checkbox"> Some Task 1
+<ul>
+<li>[ ] Some Task 1
 
-<ul><li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 1.1</input></li>
-<li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 1.2</input></li>
-<li class="task-list-item">
-<input type="checkbox"> Sub Task 1.3</input></li>
-<li class="task-list-item">
-<input type="checkbox"> Sub Task 1.4</input></li>
-</ul></input></li>
-<li class="task-list-item">
-<input type="checkbox"> Some Task 2
+<ul>
+<li>[x] Sub Task 1.1</li>
+<li>[x] Sub Task 1.2</li>
+<li>[ ] Sub Task 1.3</li>
+<li>[ ] Sub Task 1.4</li>
+</ul></li>
+<li>[ ] Some Task 2
 
-<ul><li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 2.1</input></li>
-<li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 2.2</input></li>
-<li class="task-list-item">
-<input type="checkbox"> Sub Task 2.3
+<ul>
+<li>[x] Sub Task 2.1</li>
+<li>[x] Sub Task 2.2</li>
+<li>[ ] Sub Task 2.3
 
-<ul><li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub-Sub Task 2.3.1</input></li>
-<li class="task-list-item">
-<input type="checkbox"> Sub-Sub Task 2.3.2</input></li>
-</ul></input></li>
-<li class="task-list-item">
-<input type="checkbox"> Sub Task 2.4</input></li>
-</ul></input></li>
+<ul>
+<li>[x] Sub-Sub Task 2.3.1</li>
+<li>[ ] Sub-Sub Task 2.3.2</li>
+</ul></li>
+<li>[ ] Sub Task 2.4</li>
+</ul></li>
 <li>Some Item 1</li>
-<li class="task-list-item">
-<input type="checkbox" checked="checked"> Some Task 3
+<li>[x] Some Task 3
 
-<ul><li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 3.1</input></li>
-</ul></input></li>
+<ul>
+<li>[x] Sub Task 3.1</li>
+</ul></li>
 <li>Some Item 2
 
 <ul>
@@ -286,12 +277,11 @@ func main() {
 <li>Sub Item 2.1.1</li>
 </ul></li>
 </ul></li>
-<li class="task-list-item">
-<input type="checkbox" checked="checked"> Some Task 4
+<li>[x] Some Task 4
 
-<ul><li class="task-list-item">
-<input type="checkbox" checked="checked"> Sub Task 4.1</input></li>
-</ul></input></li>
+<ul>
+<li>[x] Sub Task 4.1</li>
+</ul></li>
 </ul>
 
 </div>
