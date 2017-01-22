@@ -20,14 +20,14 @@ $ \sum_{n = 0}^\infty \frac {f^{(n)}(a)} {n!} (x-a)^n $
 
     ```math
     \begin{eqnarray}
-    e^{j \theta} & = & cos \theta + jsin \theta \\
+    e^{j \theta} & = & \cos \theta + j \sin \theta \\
     e^{j \pi} & = & -1
     \end{eqnarray}
     ```
 
 ```math
 \begin{eqnarray}
-e^{j \theta} & = & cos \theta + jsin \theta \\
+e^{j \theta} & = & \cos \theta + j \sin \theta \\
 e^{j \pi} & = & -1
 \end{eqnarray}
 ```
