@@ -24,9 +24,9 @@ build_script:
 - cmd: >-
     go get -u github.com/golang/dep/...
 
-    dir %GOPATH%/bin
+    dir %GOPATH%\bin
 
-    dir %GOROOT%/bin
+    dir %GOROOT%\bin
 
     go get -d github.com/nocd5/md2html
 
