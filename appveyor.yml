@@ -17,6 +17,8 @@ environment:
     GOARCH: amd64
 install:
 - cmd: >-
+    go env
+
     go get -u github.com/golang/dep/...
 
     set PATH=%PATH%;%GOPATH%\bin
