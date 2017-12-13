@@ -21,7 +21,9 @@ install:
 
     go get -u github.com/golang/dep/...
 
-    set PATH=%PATH%;%GOPATH%\bin
+    set PATH=%PATH%;%GOPATH%\bin\windows_386
+
+    dir %GOPATH%\bin\windows_386
 before_build:
 - cmd: >-
     go env
