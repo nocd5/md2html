@@ -53,6 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var list = document.getElementsByTagName('LI');
     for (var i = 0; i < list.length; i++) {
         for (var j = 0; j < list[i].childNodes.length; j++) {
+            if (list[i].childNodes[j].tagName == 'P') {
+                list[i].childNodes[j].outerHTML = list[i].childNodes[j].innerHTML;
+            }
             if (list[i].childNodes[j].nodeName == '#text') {
                 if (list[i].childNodes[j].data.substr(0,3) == "[ ]") {
                     var checkbox = document.createElement('input');
