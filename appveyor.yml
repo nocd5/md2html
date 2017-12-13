@@ -3,7 +3,7 @@ branches:
   except:
   - gh-pages
 skip_tags: true
-clone_folder: C:\Users\appveyor\md2html
+clone_folder: C:\gopath\src\appveyor\md2html
 environment:
   GOPATH: C:\gopath
   matrix:
