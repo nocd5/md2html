@@ -21,9 +21,9 @@ install:
 
     go get -u github.com/golang/dep/...
 
-    set PATH=%PATH%;%GOPATH%\bin\$(GOOS)_$(GOARCH)
+    set PATH=%PATH%;%GOPATH%\bin\%GOOS%_%GOARCH%
 
-    dir %GOPATH%\bin\$(GOOS)_$(GOARCH)
+    dir %GOPATH%\bin\%GOOS%_%GOARCH%
 before_build:
 - cmd: >-
     go env
