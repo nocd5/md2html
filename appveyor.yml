@@ -18,8 +18,16 @@ environment:
 before_build:
 - cmd: >-
     go env
+
+    echo %PATH%
 build_script:
 - cmd: >-
+    go get -u github.com/golang/dep/...
+
+    dir %GOPATH%/bin
+
+    dir %GOROOT%/bin
+
     go get -d github.com/nocd5/md2html
 
     go build
