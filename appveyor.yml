@@ -18,6 +18,8 @@ environment:
 install:
 - cmd: >-
     go get -u github.com/golang/dep/...
+
+    set PATH=%PATH%;%GOPATH%\bin
 before_build:
 - cmd: >-
     go env
