@@ -7,33 +7,28 @@ clone_folder: C:\gopath\src\appveyor\md2html
 environment:
   GOPATH: C:\gopath
   matrix:
-  - GOOS: windows
-    GOARCH: 386
-  - GOOS: windows
-    GOARCH: amd64
-  - GOOS: linux
-    GOARCH: 386
-  - GOOS: linux
-    GOARCH: amd64
+  - _GOOS: windows
+    _GOARCH: 386
+  - _GOOS: windows
+    _GOARCH: amd64
+  - _GOOS: linux
+    _GOARCH: 386
+  - _GOOS: linux
+    _GOARCH: amd64
 init:
+- cmd: >-
+    go env
+install:
 - cmd: >-
     go get -u github.com/golang/dep/...
 
     set PATH=%PATH%;%GOPATH%\bin
-install:
-- cmd: >-
-    go env
 before_build:
 - cmd: >-
-    go env
+    set GOOS=%_GOOS%
+    set GOARCH=%_GOARCH%
 build_script:
 - cmd: >-
-    dir %GOPATH%\bin
-
-    dir %GOROOT%\bin
-
-    go get -d github.com/nocd5/md2html
-
     dep ensure
 
     go build
