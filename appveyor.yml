@@ -16,28 +16,19 @@ environment:
   - _GOOS: linux
     _GOARCH: amd64
 init:
-- cmd: >-
-    go env
+  - go env
 install:
-- cmd: >-
-    go get -u github.com/golang/dep/...
-
-    set PATH=%PATH%;%GOPATH%\bin
+  - go get -u github.com/golang/dep/...
+  - set PATH=%PATH%;%GOPATH%\bin
 before_build:
-- cmd: >-
-    set GOOS=%_GOOS%
-
-    set GOARCH=%_GOARCH%
+  - set GOOS=%_GOOS%
+  - set GOARCH=%_GOARCH%
 build_script:
-- cmd: >-
-    dep ensure
-
-    go build
+  - dep ensure
+  - go build
 after_build:
-- cmd: >-
-    for /f "usebackq" %%e in (`go env GOEXE`) do @ set GOEXE=%%e
-
-    7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
+  - for /f "usebackq" %%e in (`go env GOEXE`) do @ set GOEXE=%%e
+  - 7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
 artifacts:
 - path: md2html_$(GOOS)_$(GOARCH).zip
   name: md2html
