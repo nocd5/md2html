@@ -3,31 +3,32 @@ branches:
   except:
   - gh-pages
 skip_tags: true
-clone_folder: C:\Users\appveyor\md2html
+clone_folder: C:\gopath\src\appveyor\md2html
 environment:
   GOPATH: C:\gopath
   matrix:
-  - GOOS: windows
-    GOARCH: 386
-  - GOOS: windows
-    GOARCH: amd64
-  - GOOS: linux
-    GOARCH: 386
-  - GOOS: linux
-    GOARCH: amd64
+  - _GOOS: windows
+    _GOARCH: 386
+  - _GOOS: windows
+    _GOARCH: amd64
+  - _GOOS: linux
+    _GOARCH: 386
+  - _GOOS: linux
+    _GOARCH: amd64
+init:
+  - go env
+install:
+  - go get -u github.com/golang/dep/...
+  - set PATH=%PATH%;%GOPATH%\bin
 before_build:
-- cmd: >-
-    go env
+  - set GOOS=%_GOOS%
+  - set GOARCH=%_GOARCH%
 build_script:
-- cmd: >-
-    go get -d github.com/nocd5/md2html
-
-    go build
+  - dep ensure
+  - go build
 after_build:
-- cmd: >-
-    for /f "usebackq" %%e in (`go env GOEXE`) do @ set GOEXE=%%e
-
-    7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
+  - for /f "usebackq" %%e in (`go env GOEXE`) do @ set GOEXE=%%e
+  - 7z a md2html_%GOOS%_%GOARCH%.zip md2html%GOEXE%
 artifacts:
 - path: md2html_$(GOOS)_$(GOARCH).zip
   name: md2html
