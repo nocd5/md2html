@@ -26,6 +26,7 @@ install:
 before_build:
 - cmd: >-
     set GOOS=%_GOOS%
+
     set GOARCH=%_GOARCH%
 build_script:
 - cmd: >-
