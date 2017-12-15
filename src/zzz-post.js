@@ -75,4 +75,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    // colspan
+    var merge = function(cells) {
+        var cellary = Array.prototype.slice.call(cells, 0)
+        var n = 0;
+        for (i = 1; i < cells.length; i++) {
+            if (cellary[i].innerHTML == "") {
+                cellary[i-(++n)].setAttribute("colspan",1+n);
+                cellary[i].outerHTML = ""
+            }
+            else {
+                n = 0;
+            }
+        }
+    }
+    var tbls = document.querySelectorAll("table");
+    Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _){
+        // thead
+        var headrows = tbl.querySelectorAll("thead > tr");
+        Array.prototype.slice.call(headrows, 0).forEach(function(row, _) {
+            merge(row.querySelectorAll("th"));
+        });
+        // tbody
+        var rows = tbl.querySelectorAll("tbody > tr");
+        Array.prototype.slice.call(rows, 0).forEach(function(row, _){
+            merge(row.querySelectorAll("td"));
+        });
+    });
 }, false);
