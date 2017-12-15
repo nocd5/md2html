@@ -82,8 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var n = 0;
         for (i = 1; i < cells.length; i++) {
             if (cellary[i].innerHTML == "") {
-                cellary[i-(++n)].setAttribute("colspan",1+n);
-                cellary[i].outerHTML = ""
+                n++;
+                cellary[i - n].setAttribute("colspan", 1 + n);
+                cellary[i].outerHTML = "";
             }
             else {
                 n = 0;
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     var tbls = document.querySelectorAll("table");
-    Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _){
+    Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _) {
         // thead
         var headrows = tbl.querySelectorAll("thead > tr");
         Array.prototype.slice.call(headrows, 0).forEach(function(row, _) {
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         // tbody
         var rows = tbl.querySelectorAll("tbody > tr");
-        Array.prototype.slice.call(rows, 0).forEach(function(row, _){
+        Array.prototype.slice.call(rows, 0).forEach(function(row, _) {
             merge(row.querySelectorAll("td"));
         });
     });
