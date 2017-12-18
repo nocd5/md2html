@@ -77,11 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // colspan
-    var merge = function(cells) {
+    var colspan = function(cells) {
         var cellary = Array.prototype.slice.call(cells, 0)
         var n = 0;
-        for (i = 1; i < cells.length; i++) {
-            if (cellary[i].innerHTML == "") {
+        for (var i = 1; i < cells.length; i++) {
+            if (cellary[i].innerHTML == "&lt;") {
                 n++;
                 cellary[i - n].setAttribute("colspan", 1 + n);
                 cellary[i].outerHTML = "";
@@ -91,17 +91,42 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+    // rowspan
+    var rowspan = function(rows, elm) {
+        var rowary = Array.prototype.slice.call(rows, 0)
+        var cells = [];
+        var maxcol = 0;
+        var n = 0;
+        for (var i = 0; i < rows.length; i++) {
+          cells.push(Array.prototype.slice.call(rows[i].querySelectorAll(elm), 0));
+          maxcol = Math.max(maxcol, cells[i].length);
+        }
+        for (var i = 0; i < maxcol; i++) {
+            for (var j = 1; j < cells.length; j++) {
+                if (cells[j][i].innerHTML == "^") {
+                    n++;
+                    cells[j - n][i].setAttribute("rowspan", 1 + n);
+                    cells[j][i].outerHTML = "";
+                }
+                else {
+                    n = 0;
+                }
+            }
+        }
+    }
     var tbls = document.querySelectorAll("table");
     Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _) {
         // thead
         var headrows = tbl.querySelectorAll("thead > tr");
+        rowspan(headrows, "th");
         Array.prototype.slice.call(headrows, 0).forEach(function(row, _) {
-            merge(row.querySelectorAll("th"));
+            colspan(row.querySelectorAll("th"));
         });
         // tbody
         var rows = tbl.querySelectorAll("tbody > tr");
+        rowspan(rows, "td");
         Array.prototype.slice.call(rows, 0).forEach(function(row, _) {
-            merge(row.querySelectorAll("td"));
+            colspan(row.querySelectorAll("td"));
         });
     });
 }, false);
