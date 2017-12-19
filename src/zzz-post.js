@@ -77,56 +77,75 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // colspan
+    var recol = new RegExp('\u00a6\\s*', 'g');
     var colspan = function(cells) {
         var cellary = Array.prototype.slice.call(cells, 0)
         var n = 0;
         for (var i = 1; i < cells.length; i++) {
-            if (cellary[i].innerHTML == "&lt;") {
-                n++;
-                cellary[i - n].setAttribute("colspan", 1 + n);
-                cellary[i].outerHTML = "";
+            var seps = cellary[i].innerHTML.match(recol)
+            if (seps != null && seps.length > 0) {
+                cellary[i].innerHTML = cellary[i].innerHTML.replace(recol, '');
+                n = n + seps.length;
+                cellary[i].setAttribute('colspan', 1 + seps.length);
             }
-            else {
-                n = 0;
-            }
+        }
+        for (var j = 1; j <= n; j++) {
+            cellary[cells.length-j].outerHTML = '';
         }
     }
     // rowspan
+    var colpos = function(row, n) {
+        var pos = 0;
+        var i = 0;
+        while (pos < n) {
+            i++;
+            var s = row[i].getAttribute('colspan');
+            pos += s == null ? 1 : Number(s);
+        }
+        return i;
+    }
     var rowspan = function(rows, elm) {
         var rowary = Array.prototype.slice.call(rows, 0)
         var cells = [];
         var maxcol = 0;
-        var n = 0;
         for (var i = 0; i < rows.length; i++) {
           cells.push(Array.prototype.slice.call(rows[i].querySelectorAll(elm), 0));
           maxcol = Math.max(maxcol, cells[i].length);
         }
         for (var i = 0; i < maxcol; i++) {
+            var n = 0;
+            var t = 0;
             for (var j = 1; j < cells.length; j++) {
-                if (cells[j][i].innerHTML == "^") {
+                var jp = colpos(cells[j], i);
+                if (cells[j][jp] != null && cells[j][jp].innerHTML == '') {
                     n++;
-                    cells[j - n][i].setAttribute("rowspan", 1 + n);
-                    cells[j][i].outerHTML = "";
+                    if (cells[j - n] != null && cells[j - n][colpos(cells[t], i)] != null) {
+                        cells[j - n][colpos(cells[t], i)].setAttribute('rowspan', 1 + n);
+                    }
+                    if (cells[j][jp].parentNode != null) {
+                        cells[j][jp].outerHTML = '';
+                    }
                 }
                 else {
+                    t = j;
                     n = 0;
                 }
             }
         }
     }
-    var tbls = document.querySelectorAll("table");
+    var tbls = document.querySelectorAll('table');
     Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _) {
         // thead
-        var headrows = tbl.querySelectorAll("thead > tr");
-        rowspan(headrows, "th");
+        var headrows = tbl.querySelectorAll('thead > tr');
         Array.prototype.slice.call(headrows, 0).forEach(function(row, _) {
-            colspan(row.querySelectorAll("th"));
+            colspan(row.querySelectorAll('th'));
         });
+        rowspan(headrows, 'th');
         // tbody
-        var rows = tbl.querySelectorAll("tbody > tr");
-        rowspan(rows, "td");
+        var rows = tbl.querySelectorAll('tbody > tr');
         Array.prototype.slice.call(rows, 0).forEach(function(row, _) {
-            colspan(row.querySelectorAll("td"));
+            colspan(row.querySelectorAll('td'));
         });
+        rowspan(rows, 'td');
     });
 }, false);
