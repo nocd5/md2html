@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var colspan = function(cells) {
         var cellary = Array.prototype.slice.call(cells, 0)
         var ts = 0;
-        for (var i = 0; i < cells.length; i++) {
-            var seps = cellary[i].innerHTML.match(recol)
+        cellary.forEach(function(cell, _) {
+            var seps = cell.innerHTML.match(recol)
             if (seps != null && seps.length > 0) {
-                cellary[i].innerHTML = cellary[i].innerHTML.replace(recol, '');
+                cell.innerHTML = cell.innerHTML.replace(recol, '');
                 ts += seps.length;
-                cellary[i].setAttribute('colspan', 1 + seps.length);
+                cell.setAttribute('colspan', 1 + seps.length);
             }
-        }
+        });
         for (var j = 1; j <= ts; j++) {
             cellary[cells.length-j].outerHTML = '';
         }
@@ -108,16 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return i;
     }
     var rowspan = function(rows, elm) {
-        var rowary = Array.prototype.slice.call(rows, 0)
         var cells = [];
         var maxcol = 0;
         for (var i = 0; i < rows.length; i++) {
             cells.push(Array.prototype.slice.call(rows[i].querySelectorAll(elm), 0));
             var col = 0;
-            for (var j = 0; j < cells[i].length; j++) {
-                var s = cells[i][j].getAttribute('colspan');
+            cells[i].forEach(function(cell) {
+                var s = cell.getAttribute('colspan');
                 col += s == null ? 1 : Number(s);
-            }
+            });
             maxcol = Math.max(maxcol, col);
         }
         for (var i = 0; i < maxcol; i++) {
@@ -145,13 +144,13 @@ document.addEventListener('DOMContentLoaded', function() {
     Array.prototype.slice.call(tbls, 0).forEach(function(tbl, _) {
         // thead
         var headrows = tbl.querySelectorAll('thead > tr');
-        Array.prototype.slice.call(headrows, 0).forEach(function(row, _) {
+        Array.prototype.forEach.call(headrows, function(row, _) {
             colspan(row.querySelectorAll('th'));
         });
         rowspan(headrows, 'th');
         // tbody
         var rows = tbl.querySelectorAll('tbody > tr');
-        Array.prototype.slice.call(rows, 0).forEach(function(row, _) {
+        Array.prototype.forEach.call(rows, function(row, _) {
             colspan(row.querySelectorAll('td'));
         });
         rowspan(rows, 'td');
