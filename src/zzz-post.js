@@ -80,16 +80,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var recol = new RegExp('\u00a6\\s*', 'g');
     var colspan = function(cells) {
         var cellary = Array.prototype.slice.call(cells, 0)
-        var n = 0;
-        for (var i = 1; i < cells.length; i++) {
+        var ts = 0;
+        for (var i = 0; i < cells.length; i++) {
             var seps = cellary[i].innerHTML.match(recol)
             if (seps != null && seps.length > 0) {
                 cellary[i].innerHTML = cellary[i].innerHTML.replace(recol, '');
-                n = n + seps.length;
+                ts += seps.length;
                 cellary[i].setAttribute('colspan', 1 + seps.length);
             }
         }
-        for (var j = 1; j <= n; j++) {
+        for (var j = 1; j <= ts; j++) {
             cellary[cells.length-j].outerHTML = '';
         }
     }
@@ -97,10 +97,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var colpos = function(row, n) {
         var pos = 0;
         var i = 0;
-        while (pos < n) {
-            i++;
+        while (true) {
             var s = row[i].getAttribute('colspan');
             pos += s == null ? 1 : Number(s);
+            if (pos > n) {
+                break;
+            }
+            i++;
         }
         return i;
     }
@@ -109,26 +112,31 @@ document.addEventListener('DOMContentLoaded', function() {
         var cells = [];
         var maxcol = 0;
         for (var i = 0; i < rows.length; i++) {
-          cells.push(Array.prototype.slice.call(rows[i].querySelectorAll(elm), 0));
-          maxcol = Math.max(maxcol, cells[i].length);
+            cells.push(Array.prototype.slice.call(rows[i].querySelectorAll(elm), 0));
+            var col = 0;
+            for (var j = 0; j < cells[i].length; j++) {
+                var s = cells[i][j].getAttribute('colspan');
+                col += s == null ? 1 : Number(s);
+            }
+            maxcol = Math.max(maxcol, col);
         }
         for (var i = 0; i < maxcol; i++) {
-            var n = 0;
-            var t = 0;
+            var span = 0;
+            var root = colpos(cells[0], i);
             for (var j = 1; j < cells.length; j++) {
-                var jp = colpos(cells[j], i);
-                if (cells[j][jp] != null && cells[j][jp].innerHTML == '') {
-                    n++;
-                    if (cells[j - n] != null && cells[j - n][colpos(cells[t], i)] != null) {
-                        cells[j - n][colpos(cells[t], i)].setAttribute('rowspan', 1 + n);
-                    }
-                    if (cells[j][jp].parentNode != null) {
-                        cells[j][jp].outerHTML = '';
+                var cur = colpos(cells[j], i);
+                if (cells[j][cur] != null && cells[j][cur].innerHTML == '') {
+                    span++;
+                    if (cells[j - span] != null && cells[j - span][root] != null) {
+                        cells[j - span][root].setAttribute('rowspan', 1 + span);
+                        if (cells[j][cur].parentNode != null) {
+                            cells[j][cur].outerHTML = '';
+                        }
                     }
                 }
                 else {
-                    t = j;
-                    n = 0;
+                    root = colpos(cells[j], i);
+                    span = 0;
                 }
             }
         }
