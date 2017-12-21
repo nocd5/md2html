@@ -50,31 +50,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // CheckBox
-    var list = document.getElementsByTagName('LI');
-    for (var i = 0; i < list.length; i++) {
-        for (var j = 0; j < list[i].childNodes.length; j++) {
-            if (list[i].childNodes[j].tagName == 'P') {
-                list[i].childNodes[j].outerHTML = list[i].childNodes[j].innerHTML;
+    [].forEach.call(document.getElementsByTagName('LI'), function(li) {
+        [].forEach.call(li.childNodes, function(childNode) {
+            if (childNode.tagName == 'P') {
+                childNode.outerHTML = childNode.innerHTML;
             }
-            if (list[i].childNodes[j].nodeName == '#text') {
-                if (list[i].childNodes[j].data.substr(0,3) == "[ ]") {
+            if (childNode.nodeName == '#text') {
+                if (childNode.data.substr(0,3) == "[ ]") {
                     var checkbox = document.createElement('input');
                     checkbox.type = "checkbox"
-                    list[i].childNodes[j].data = list[i].childNodes[j].data.substr(3)
-                    list[i].insertBefore(checkbox, list[i].childNodes[0]);
-                    list[i].classList.add('task-list-item')
+                    childNode.data = childNode.data.substr(3)
+                    li.insertBefore(checkbox, li.childNodes[0]);
+                    li.classList.add('task-list-item')
                 }
-                else if (list[i].childNodes[j].data.substr(0,3) == "[x]") {
+                else if (childNode.data.substr(0,3) == "[x]") {
                     var checkbox = document.createElement('input');
                     checkbox.type = "checkbox"
                     checkbox.checked = "checked"
-                    list[i].childNodes[j].data = list[i].childNodes[j].data.substr(3)
-                    list[i].insertBefore(checkbox, list[i].childNodes[0]);
-                    list[i].classList.add('task-list-item')
+                    childNode.data = childNode.data.substr(3)
+                    li.insertBefore(checkbox, li.childNodes[0]);
+                    li.classList.add('task-list-item')
                 }
             }
-        }
-    }
+        });
+    });
 
     // translate column
     var recol = new RegExp('\u00a6\\s*', 'g');
