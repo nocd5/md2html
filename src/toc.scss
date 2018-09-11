@@ -1,17 +1,19 @@
 @import 'config';
 
 #markdown-toc {
-    position: fixed;
     overflow-y: auto;
     color: $color-fg;
     background: $color-bg;
     width: $toc-width;
     min-width: $toc-minwidth;
-    height: 100%;
-    padding-top: $toc-shiftwidth;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     box-shadow: 0 0 5px 0 #000;
+    transition: width #{$button-duration/1000 + 's'} ease-in-out, min-width #{$button-duration/1000 + 's'} ease-in-out;
     ul {
         padding: 0;
+        padding-top: $toc-shiftwidth;
         list-style: none;
     }
     a {

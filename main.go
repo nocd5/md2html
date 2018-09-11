@@ -31,8 +31,10 @@ const (
 %s
 </head>
 <body>
+<div class="container">
 <div class="markdown-body">
 %s
+</div>
 </div>
 </body>
 </html>`
@@ -46,30 +48,32 @@ const (
 %s
 </head>
 <body>
+<div class="container">
 <div id="markdown-toc"></div>
 <div class="markdown-body">
 %s
+</div>
 </div>
 </body>
 </html>`
 
 	commonHtmlFlags = 0 |
-		blackfriday.HTML_USE_XHTML |
-		blackfriday.HTML_USE_SMARTYPANTS |
-		blackfriday.HTML_SMARTYPANTS_FRACTIONS |
-		blackfriday.HTML_SMARTYPANTS_DASHES |
-		blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
+		blackfriday.UseXHTML |
+		blackfriday.Smartypants |
+		blackfriday.SmartypantsFractions |
+		blackfriday.SmartypantsDashes |
+		blackfriday.SmartypantsLatexDashes
 
 	extensions = 0 |
-		blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
-		blackfriday.EXTENSION_TABLES |
-		blackfriday.EXTENSION_FENCED_CODE |
-		blackfriday.EXTENSION_AUTOLINK |
-		blackfriday.EXTENSION_STRIKETHROUGH |
-		blackfriday.EXTENSION_AUTO_HEADER_IDS |
-		blackfriday.EXTENSION_HEADER_IDS |
-		blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
-		blackfriday.EXTENSION_DEFINITION_LISTS
+		blackfriday.NoIntraEmphasis |
+		blackfriday.Tables |
+		blackfriday.FencedCode |
+		blackfriday.Autolink |
+		blackfriday.Strikethrough |
+		blackfriday.AutoHeadingIDs |
+		blackfriday.HeadingIDs |
+		blackfriday.BackslashLineBreak |
+		blackfriday.DefinitionLists
 )
 
 func main() {
@@ -133,8 +137,14 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
-	renderer := blackfriday.HtmlRenderer(commonHtmlFlags, "", "")
-	html := string(blackfriday.Markdown(md, renderer, extensions))
+	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: commonHtmlFlags,
+	})
+	opt := []blackfriday.Option{
+		blackfriday.WithRenderer(renderer),
+		blackfriday.WithExtensions(extensions),
+	}
+	html := string(blackfriday.Run(md, opt...))
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
@@ -166,7 +176,13 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) e
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""
 
-	renderer := blackfriday.HtmlRenderer(commonHtmlFlags, "", "")
+	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: commonHtmlFlags,
+	})
+	opt := []blackfriday.Option{
+		blackfriday.WithRenderer(renderer),
+		blackfriday.WithExtensions(extensions),
+	}
 	for _, input := range inputs {
 		fi, err := os.Open(input)
 		if err != nil {
@@ -179,7 +195,7 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) e
 			return err
 		}
 
-		h := string(blackfriday.Markdown(md, renderer, extensions))
+		h := string(blackfriday.Run(md, opt...))
 
 		if embed {
 			h, err = embedImage(h, filepath.Dir(input))
