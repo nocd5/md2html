@@ -31,8 +31,10 @@ const (
 %s
 </head>
 <body>
+<div class="container">
 <div class="markdown-body">
 %s
+</div>
 </div>
 </body>
 </html>`
@@ -46,9 +48,11 @@ const (
 %s
 </head>
 <body>
+<div class="container">
 <div id="markdown-toc"></div>
 <div class="markdown-body">
 %s
+</div>
 </div>
 </body>
 </html>`

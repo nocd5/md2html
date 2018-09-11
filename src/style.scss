@@ -2,7 +2,14 @@
     margin: 0;
 }
 
+.container {
+    display: flex;
+}
+
 .markdown-body {
+    flex-grow: 1;
+    min-width: 300px;
+    overflow-x: auto;
     padding: 2em;
     table {
         font-family: Menlo,'Bitstream Vera Sans Mono','DejaVu Sans Mono',Monaco,Consolas,monospace;

@@ -84,10 +84,8 @@ $ go install
 
 - [PrismJS/prism](https://github.com/PrismJS/prism)
   ([License](https://raw.githubusercontent.com/PrismJS/prism/master/LICENSE))
-- [jquery/jquery](https://github.com/jquery/jquery)
-  ([License](https://raw.githubusercontent.com/jquery/jquery/master/LICENSE.txt))
-- [jgallen23/toc](https://github.com/jgallen23/toc)
-  ([License](https://raw.githubusercontent.com/jgallen23/toc/master/LICENSE))
+- [cferdinandi/smooth-scroll](https://github.com/cferdinandi/smooth-scroll)
+  ([License](https://raw.githubusercontent.com/cferdinandi/smooth-scroll/master/LICENSE.md))
 - [pkra/MathJax-single-file](https://github.com/pkra/MathJax-single-file)
   ([License](https://raw.githubusercontent.com/pkra/MathJax-single-file/master/LICENSE))
 
