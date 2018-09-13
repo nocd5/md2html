@@ -4,20 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    var body, anchor, toc, scroll, button;
-    // add button element before calling getElementById/getElementsByClassName
-    document.body.innerHTML =  document.body.innerHTML + '<div class="toc-button"></div>';
-    button = document.getElementsByClassName('toc-button')[0];
-    anchor = document.querySelectorAll('h1,h2,h3,h4');
-    body = document.getElementsByClassName('markdown-body')[0];
+    var toc, scroll, button, anchor;
     toc = document.getElementById('markdown-toc');
     // wrapper for scrollbar on left side
-    toc.innerHTML = '<div class="scroll">' + toc.innerHTML + '</div>';
-    scroll = document.querySelector('#markdown-toc > .scroll');
+    scroll = document.createElement('div');
+    scroll.classList.add('scroll');
+    // add button element before calling getElementById/getElementsByClassName
+    button = document.createElement('div');
+    button.classList.add('toc-button');
+    // get anchor
+    anchor = document.querySelectorAll('h1,h2,h3,h4');
 
     // generate TOC
     var toclist = document.createElement('ul');
-    scroll.appendChild(toclist);
     [].forEach.call(anchor, function(c) {
         var li = document.createElement('li');
         li.classList.add('toc-' + c.tagName.toLowerCase());
@@ -27,9 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
         li.appendChild(a);
         toclist.appendChild(li);
     });
+    scroll.appendChild(toclist);
     // show scrollbar on left side
     toc.style.direction = 'rtl';
     scroll.style.direction = 'ltr';
+    toc.appendChild(scroll);
 
     // TOC toggle button
     button.onclick = function() {
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toc.style.overflowY = 'auto';
         }
     }
+    document.body.appendChild(button);
 
     // Smooth Scroll
     SmoothScroll('a[href*="#"]');
