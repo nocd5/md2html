@@ -19,6 +19,7 @@ type Options struct {
 	EmbedImage bool   `long:"embed" short:"e" description:"embed image by base64 encoding"`
 	TOC        bool   `long:"toc" short:"t" description:"generate TOC"`
 	MathJax    bool   `long:"mathjax" short:"m" description:"use MathJax"`
+	TableSpan  bool   `long:"span" short:"s" description:"enable table row/col span"`
 }
 
 const (
@@ -107,19 +108,19 @@ func main() {
 	}
 
 	if len(opts.OutputFile) > 0 {
-		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
+		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
 		for _, file := range files {
-			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
+			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed, toc, mathjax bool) error {
+func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) error {
 	fi, err := os.Open(input)
 	if err != nil {
 		return err
@@ -135,6 +136,9 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 	if mathjax {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
+	if tablespan {
+		js += string(tablespan_bytes[:len(tablespan_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
 	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
@@ -167,11 +171,14 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 	return nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) error {
+func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, tablespan bool) error {
 	js := string(js_bytes[:len(js_bytes)])
 	if mathjax {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
+	if tablespan {
+		js += string(tablespan_bytes[:len(tablespan_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""

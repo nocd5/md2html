@@ -5,6 +5,7 @@ parent = File.expand_path(File.dirname(__FILE__))
 js = ''
 mathjax = ''
 mathjax_cfg = ''
+tablespan = ''
 Dir.glob(parent + '/assets/*.js').each do |f|
   if File.basename(f) =~ /mathjax/i then
     if File.basename(f) =~ /config/i then
@@ -16,6 +17,10 @@ Dir.glob(parent + '/assets/*.js').each do |f|
         mathjax += File.read(f, encoding: Encoding::UTF_8) + "\n"
         mathjax += '</script>' + "\n"
     end
+  elsif File.basename(f) =~ /tablespan/i then
+    tablespan += '<script type="text/javascript">' + "\n"
+    tablespan += File.read(f, encoding: Encoding::UTF_8) + "\n"
+    tablespan += '</script>' + "\n"
   else
     js += '<script type="text/javascript">' + "\n"
     js += File.read(f, encoding: Encoding::UTF_8) + "\n"
@@ -33,11 +38,16 @@ mathjax_bytes = mathjax.unpack('C*')
                        .gsub(/(?:0x\w{2},\s*){16}/, "\\0\n")
                        .gsub(/\s+\n/, "\n")
 mathjax_cfg_bytes = mathjax_cfg.unpack('C*')
-                       .map { |b| format('0x%02X', b) }
-                       .join(', ')
-                       .gsub(/(?:0x\w{2},\s*){16}/, "\\0\n")
-                       .gsub(/\s+\n/, "\n")
+                               .map { |b| format('0x%02X', b) }
+                               .join(', ')
+                               .gsub(/(?:0x\w{2},\s*){16}/, "\\0\n")
+                               .gsub(/\s+\n/, "\n")
 
+tablespan_bytes = tablespan.unpack('C*')
+                           .map { |b| format('0x%02X', b) }
+                           .join(', ')
+                           .gsub(/(?:0x\w{2},\s*){16}/, "\\0\n")
+                           .gsub(/\s+\n/, "\n")
 css = ''
 Dir.glob(parent + '/assets/*.css').each do |f|
   css += '<style type="text/css">' + "\n"
@@ -61,6 +71,9 @@ var mathjax_cfg_bytes = [...]byte{
 }
 var mathjax_bytes = [...]byte{
 	#{mathjax_bytes.gsub(/\n/, "\n\t")},
+}
+var tablespan_bytes = [...]byte{
+	#{tablespan_bytes.gsub(/\n/, "\n\t")},
 }
 var css_bytes = [...]byte{
 	#{css_bytes.gsub(/\n/, "\n\t")},
