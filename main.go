@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"syscall"
 )
 
@@ -148,7 +149,10 @@ func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) e
 		blackfriday.WithRenderer(renderer),
 		blackfriday.WithExtensions(extensions),
 	}
-	html := string(blackfriday.Run(md, opt...))
+	html, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+	if err != nil {
+		return err
+	}
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
@@ -202,7 +206,10 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, t
 			return err
 		}
 
-		h := string(blackfriday.Run(md, opt...))
+		h, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+		if err != nil {
+			return err
+		}
 
 		if embed {
 			h, err = embedImage(h, filepath.Dir(input))
@@ -231,7 +238,7 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, t
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
+	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")(\S+?)("[\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
@@ -279,5 +286,19 @@ func embedImage(src, parent string) (string, error) {
 		}
 		dest = re_replace.ReplaceAllString(dest, "${1}data:"+mime_type+";base64,"+b64img+"${2}")
 	}
+	return dest, nil
+}
+
+func parseImageOpt(src string) (string, error) {
+	re, err := regexp.Compile(`(<img[\S\s]+?src=)"(\S+?)\?(\S+?)"([\S\s]*?/?>)`)
+	if err != nil {
+		return src, err
+	}
+
+	dest := src
+	dest = re.ReplaceAllStringFunc(dest, func(s string) string {
+		res := re.FindStringSubmatch(s)
+		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
+	})
 	return dest, nil
 }
