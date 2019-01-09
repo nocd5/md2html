@@ -44,6 +44,10 @@ if `-o` option was abbreviated, `input Markdown file name` + `.html` will be use
 
 `-m/--mathjax` option enables using MathJax.
 
+### Table row/col span
+
+`-s/--span` option enables using rowspan/colspan for table tag
+
 ## Example
 
 Please execute the following commands to make example files.
