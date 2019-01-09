@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"syscall"
 )
 
@@ -19,6 +20,7 @@ type Options struct {
 	EmbedImage bool   `long:"embed" short:"e" description:"embed image by base64 encoding"`
 	TOC        bool   `long:"toc" short:"t" description:"generate TOC"`
 	MathJax    bool   `long:"mathjax" short:"m" description:"use MathJax"`
+	TableSpan  bool   `long:"span" short:"s" description:"enable table row/col span"`
 }
 
 const (
@@ -107,19 +109,19 @@ func main() {
 	}
 
 	if len(opts.OutputFile) > 0 {
-		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
+		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
 		for _, file := range files {
-			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax); err != nil {
+			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed, toc, mathjax bool) error {
+func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) error {
 	fi, err := os.Open(input)
 	if err != nil {
 		return err
@@ -136,6 +138,9 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
 	}
+	if tablespan {
+		js += string(tablespan_bytes[:len(tablespan_bytes)])
+	}
 	css := string(css_bytes[:len(css_bytes)])
 	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 		Flags: commonHtmlFlags,
@@ -144,7 +149,10 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 		blackfriday.WithRenderer(renderer),
 		blackfriday.WithExtensions(extensions),
 	}
-	html := string(blackfriday.Run(md, opt...))
+	html, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+	if err != nil {
+		return err
+	}
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
@@ -167,11 +175,14 @@ func writeHtml(input, output string, embed, toc, mathjax bool) error {
 	return nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) error {
+func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, tablespan bool) error {
 	js := string(js_bytes[:len(js_bytes)])
 	if mathjax {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
+	if tablespan {
+		js += string(tablespan_bytes[:len(tablespan_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""
@@ -195,7 +206,10 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) e
 			return err
 		}
 
-		h := string(blackfriday.Run(md, opt...))
+		h, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+		if err != nil {
+			return err
+		}
 
 		if embed {
 			h, err = embedImage(h, filepath.Dir(input))
@@ -224,7 +238,7 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool) e
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
+	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")(\S+?)("[\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
@@ -272,5 +286,19 @@ func embedImage(src, parent string) (string, error) {
 		}
 		dest = re_replace.ReplaceAllString(dest, "${1}data:"+mime_type+";base64,"+b64img+"${2}")
 	}
+	return dest, nil
+}
+
+func parseImageOpt(src string) (string, error) {
+	re, err := regexp.Compile(`(<img[\S\s]+?src=)"(\S+?)\?(\S+?)"([\S\s]*?/?>)`)
+	if err != nil {
+		return src, err
+	}
+
+	dest := src
+	dest = re.ReplaceAllStringFunc(dest, func(s string) string {
+		res := re.FindStringSubmatch(s)
+		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
+	})
 	return dest, nil
 }

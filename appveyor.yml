@@ -6,6 +6,8 @@ skip_tags: true
 clone_folder: C:\gopath\src\appveyor\md2html
 environment:
   GOPATH: C:\gopath
+  GOVERSION: '1.11'
+  GO111MODULE: 'on'
   matrix:
   - _GOOS: windows
     _GOARCH: 386
@@ -16,15 +18,14 @@ environment:
   - _GOOS: linux
     _GOARCH: amd64
 init:
+  - go version
   - go env
 install:
-  - go get -u github.com/golang/dep/...
   - set PATH=%PATH%;%GOPATH%\bin
 before_build:
   - set GOOS=%_GOOS%
   - set GOARCH=%_GOARCH%
 build_script:
-  - dep ensure
   - go build
 after_build:
   - for /f "usebackq" %%e in (`go env GOEXE`) do @ set GOEXE=%%e
