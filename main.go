@@ -238,7 +238,7 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, t
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")(\S+?)("[\S\s]*?/?>)`)
+	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
@@ -290,7 +290,7 @@ func embedImage(src, parent string) (string, error) {
 }
 
 func parseImageOpt(src string) (string, error) {
-	re, err := regexp.Compile(`(<img[\S\s]+?src=)"(\S+?)\?(\S+?)"([\S\s]*?/?>)`)
+	re, err := regexp.Compile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
