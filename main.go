@@ -20,6 +20,7 @@ type Options struct {
 	EmbedImage bool   `long:"embed" short:"e" description:"embed image by base64 encoding"`
 	TOC        bool   `long:"toc" short:"t" description:"generate TOC"`
 	MathJax    bool   `long:"mathjax" short:"m" description:"use MathJax"`
+	Favicon    string `long:"favicon" short:"f" description:"use favicon"`
 	TableSpan  bool   `long:"span" short:"s" description:"enable table row/col span"`
 }
 
@@ -29,7 +30,7 @@ const (
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>%s</title>
+%s<title>%s</title>
 %s
 </head>
 <body>
@@ -42,6 +43,8 @@ const (
 </html>`
 
 	toc_tag = `<div id="markdown-toc"></div>
+`
+	favicon_tag = `<link rel='shortcut icon' href='data:image/x-icon;base64,%s'/>
 `
 
 	commonHtmlFlags = 0 |
@@ -94,19 +97,19 @@ func main() {
 	}
 
 	if len(opts.OutputFile) > 0 {
-		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
+		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
 		for _, file := range files {
-			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax, opts.TableSpan); err != nil {
+			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) error {
+func writeHtml(input, output string, embed, toc, mathjax bool, favicon string, tablespan bool) error {
 	fi, err := os.Open(input)
 	if err != nil {
 		return err
@@ -146,21 +149,32 @@ func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) e
 		}
 	}
 
+	tt := ""
+	if toc {
+		tt = toc_tag
+	}
+
+	favi := ""
+	if len(favicon) > 0 {
+		cwd, _ := os.Getwd()
+		b, err := decodeBase64(favicon, cwd)
+		if err != nil {
+			return err
+		}
+		favi = fmt.Sprintf(favicon_tag, b)
+	}
+
 	fo, err := os.Create(output)
 	if err != nil {
 		return err
 	}
 	defer fo.Close()
 
-	tt := ""
-	if toc {
-		tt = toc_tag
-	}
-	fmt.Fprintf(fo, template, input, js+"\n"+css, tt, html)
+	fmt.Fprintf(fo, template, favi, input, js+"\n"+css, tt, html)
 	return nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, tablespan bool) error {
+func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, favicon string, tablespan bool) error {
 	js := string(js_bytes[:len(js_bytes)])
 	if mathjax {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
@@ -206,19 +220,31 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, t
 		html += h
 	}
 
+	re := regexp.MustCompile(filepath.Ext(output) + "$")
+	title := filepath.Base(re.ReplaceAllString(output, ""))
+
+	tt := ""
+	if toc {
+		tt = toc_tag
+	}
+
+	favi := ""
+	if len(favicon) > 0 {
+		cwd, _ := os.Getwd()
+		b, err := decodeBase64(favicon, cwd)
+		if err != nil {
+			return err
+		}
+		favi = fmt.Sprintf(favicon_tag, b)
+	}
+
 	fo, err := os.Create(output)
 	if err != nil {
 		return err
 	}
 	defer fo.Close()
 
-	re := regexp.MustCompile(filepath.Ext(output) + "$")
-	title := filepath.Base(re.ReplaceAllString(output, ""))
-	tt := ""
-	if toc {
-		tt = toc_tag
-	}
-	fmt.Fprintf(fo, template, title, js+"\n"+css, tt, html)
+	fmt.Fprintf(fo, template, favi, title, js+"\n"+css, tt, html)
 	return nil
 }
 
@@ -271,6 +297,32 @@ func embedImage(src, parent string) (string, error) {
 		}
 		dest = re_replace.ReplaceAllString(dest, "${1}data:"+mime_type+";base64,"+b64img+"${2}")
 	}
+	return dest, nil
+}
+
+func decodeBase64(src, parent string) (string, error) {
+	path := src
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(parent, path)
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		pathErr := err.(*os.PathError)
+		errno := pathErr.Err.(syscall.Errno)
+		if errno != 0x7B { // suppress ERROR_INVALID_NAME
+			fmt.Fprintln(os.Stderr, err)
+			return "", nil
+		}
+		return "", err
+	}
+	defer f.Close()
+
+	d, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	dest := base64.StdEncoding.EncodeToString(d)
 	return dest, nil
 }
 
