@@ -34,30 +34,15 @@ const (
 </head>
 <body>
 <div class="container">
-<div class="markdown-body">
+%s<div class="markdown-body">
 %s
 </div>
 </div>
 </body>
 </html>`
 
-	template_toc = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>%s</title>
-%s
-</head>
-<body>
-<div class="container">
-<div id="markdown-toc"></div>
-<div class="markdown-body">
-%s
-</div>
-</div>
-</body>
-</html>`
+	toc_tag = `<div id="markdown-toc"></div>
+`
 
 	commonHtmlFlags = 0 |
 		blackfriday.UseXHTML |
@@ -167,11 +152,11 @@ func writeHtml(input, output string, embed, toc, mathjax bool, tablespan bool) e
 	}
 	defer fo.Close()
 
+	tt := ""
 	if toc {
-		fmt.Fprintf(fo, template_toc, input, js+"\n"+css, html)
-	} else {
-		fmt.Fprintf(fo, template, input, js+"\n"+css, html)
+		tt = toc_tag
 	}
+	fmt.Fprintf(fo, template, input, js+"\n"+css, tt, html)
 	return nil
 }
 
@@ -229,16 +214,16 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, t
 
 	re := regexp.MustCompile(filepath.Ext(output) + "$")
 	title := filepath.Base(re.ReplaceAllString(output, ""))
+	tt := ""
 	if toc {
-		fmt.Fprintf(fo, template_toc, title, js+"\n"+css, html)
-	} else {
-		fmt.Fprintf(fo, template, title, js+"\n"+css, html)
+		tt = toc_tag
 	}
+	fmt.Fprintf(fo, template, title, js+"\n"+css, tt, html)
 	return nil
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")(\S+?)("[\S\s]*?/?>)`)
+	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
@@ -290,7 +275,7 @@ func embedImage(src, parent string) (string, error) {
 }
 
 func parseImageOpt(src string) (string, error) {
-	re, err := regexp.Compile(`(<img[\S\s]+?src=)"(\S+?)\?(\S+?)"([\S\s]*?/?>)`)
+	re, err := regexp.Compile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
 	if err != nil {
 		return src, err
 	}
