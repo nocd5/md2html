@@ -49,7 +49,7 @@ gulp.task('json2sass', function() {
     .pipe(gulp.dest(paths.src));
 });
 
-gulp.task('scss', ['json2sass'], function() {
+gulp.task('scss', function() {
   return gulp.src(paths.src + '**/*.scss')
     .pipe(sass({ includePaths: paths.src }))
     .on('error', function(err) {
@@ -73,4 +73,4 @@ gulp.task('css', function() {
     .pipe(gulp.dest(paths.css));
 });
 
-gulp.task('default', ['js', 'css', 'scss', 'json2js', 'json2sass']);
+gulp.task('default', gulp.series(['json2js', 'json2sass', 'js', 'css', 'scss']));
