@@ -24,7 +24,7 @@ $ md2html example/*.md -e -t -m -s -f example/img/nocd5.png -o gh-pages/index.ht
 
 ## Installation
 
-`go get github.com/nocd5/md2html`
+`GO111MODULE=on go get github.com/nocd5/md2html`
 
 ## Usage
 
