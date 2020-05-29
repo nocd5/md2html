@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/jessevdk/go-flags"
 	"github.com/russross/blackfriday/v2"
 	"io/ioutil"
@@ -164,6 +165,18 @@ func writeHtml(input, output string, embed, toc, mathjax bool, favicon string, t
 		favi = fmt.Sprintf(favicon_tag, b)
 	}
 
+	if mathjax {
+		html, err = replaceMathJaxCodeBlock(html)
+		if err != nil {
+			return err
+		}
+	}
+
+	html, err = replaceCheckBox(html)
+	if err != nil {
+		return err
+	}
+
 	fo, err := os.Create(output)
 	if err != nil {
 		return err
@@ -218,6 +231,19 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, f
 		}
 
 		html += h
+	}
+
+	var err error
+	if mathjax {
+		html, err = replaceMathJaxCodeBlock(html)
+		if err != nil {
+			return err
+		}
+	}
+
+	html, err = replaceCheckBox(html)
+	if err != nil {
+		return err
 	}
 
 	re := regexp.MustCompile(filepath.Ext(output) + "$")
@@ -338,4 +364,50 @@ func parseImageOpt(src string) (string, error) {
 		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
 	})
 	return dest, nil
+}
+
+func replaceMathJaxCodeBlock(src string) (string, error) {
+	sr := strings.NewReader(src)
+	doc, err := goquery.NewDocumentFromReader(sr)
+	if err != nil {
+		return src, err
+	}
+
+	code := doc.Find("pre>code.language-math")
+	code.Each(func(index int, s *goquery.Selection) {
+		s.Parent().ReplaceWithHtml("<p>$$" + s.Text() + "$$</p>")
+	})
+
+	return doc.Find("body").Html()
+}
+
+func replaceCheckBox(src string) (string, error) {
+	sr := strings.NewReader(src)
+	doc, err := goquery.NewDocumentFromReader(sr)
+	if err != nil {
+		return src, err
+	}
+
+	doc.Find("li").Each(func(i int, li *goquery.Selection) {
+		li.Contents().Each(func(j int, c *goquery.Selection) {
+			if goquery.NodeName(c) == "#text" {
+				if c.Text()[:3] == "[ ]" {
+					c.ReplaceWithHtml("<input type=\"checkbox\">" + c.Text()[3:])
+					li.AddClass("task-list-item")
+				} else if c.Text()[:3] == "[x]" {
+					c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + c.Text()[3:])
+					li.AddClass("task-list-item")
+				}
+			}
+		})
+	})
+
+	return doc.Find("body").Html()
+}
+
+func transColumn(src *goquery.Selection) *goquery.Selection {
+	return src
+}
+func transRow(src *goquery.Selection) *goquery.Selection {
+	return src
 }
