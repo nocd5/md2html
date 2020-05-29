@@ -36,6 +36,6 @@ artifacts:
 deploy:
 - provider: GitHub
   auth_token:
-    secure: msXREOrf813FAzkJvvU5/QyYe/ZKzMQhMx9Zv3XD7NAHHAR+Zf1ueMDi6MsQmFlt
+    secure: VHpPnf0g2XPt+pjaVagSyiXZHq3e2se6bHIz/E3e9JonBVe2S3hRx5hEg7xcWTIJ
   artifact: md2html_$(GOOS)_$(GOARCH).zip
   draft: true
