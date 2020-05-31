@@ -404,10 +404,3 @@ func replaceCheckBox(src string) (string, error) {
 
 	return doc.Find("body").Html()
 }
-
-func transColumn(src *goquery.Selection) *goquery.Selection {
-	return src
-}
-func transRow(src *goquery.Selection) *goquery.Selection {
-	return src
-}
