@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/jessevdk/go-flags"
 	"github.com/russross/blackfriday/v2"
 	"io/ioutil"
@@ -10,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 )
@@ -126,9 +128,6 @@ func writeHtml(input, output string, embed, toc, mathjax bool, favicon string, t
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
 	}
-	if tablespan {
-		js += string(tablespan_bytes[:len(tablespan_bytes)])
-	}
 	css := string(css_bytes[:len(css_bytes)])
 	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 		Flags: commonHtmlFlags,
@@ -164,6 +163,25 @@ func writeHtml(input, output string, embed, toc, mathjax bool, favicon string, t
 		favi = fmt.Sprintf(favicon_tag, b)
 	}
 
+	if mathjax {
+		html, err = replaceMathJaxCodeBlock(html)
+		if err != nil {
+			return err
+		}
+	}
+
+	html, err = replaceCheckBox(html)
+	if err != nil {
+		return err
+	}
+
+	if tablespan {
+		html, err = replaceTableSpan(html)
+		if err != nil {
+			return err
+		}
+	}
+
 	fo, err := os.Create(output)
 	if err != nil {
 		return err
@@ -179,9 +197,6 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, f
 	if mathjax {
 		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
 		js += string(mathjax_bytes[:len(mathjax_bytes)])
-	}
-	if tablespan {
-		js += string(tablespan_bytes[:len(tablespan_bytes)])
 	}
 	css := string(css_bytes[:len(css_bytes)])
 	html := ""
@@ -218,6 +233,26 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, f
 		}
 
 		html += h
+	}
+
+	var err error
+	if mathjax {
+		html, err = replaceMathJaxCodeBlock(html)
+		if err != nil {
+			return err
+		}
+	}
+
+	html, err = replaceCheckBox(html)
+	if err != nil {
+		return err
+	}
+
+	if tablespan {
+		html, err = replaceTableSpan(html)
+		if err != nil {
+			return err
+		}
 	}
 
 	re := regexp.MustCompile(filepath.Ext(output) + "$")
@@ -338,4 +373,145 @@ func parseImageOpt(src string) (string, error) {
 		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
 	})
 	return dest, nil
+}
+
+func replaceMathJaxCodeBlock(src string) (string, error) {
+	sr := strings.NewReader(src)
+	doc, err := goquery.NewDocumentFromReader(sr)
+	if err != nil {
+		return src, err
+	}
+
+	code := doc.Find("pre>code.language-math")
+	code.Each(func(index int, s *goquery.Selection) {
+		s.Parent().ReplaceWithHtml("<p>$$" + s.Text() + "$$</p>")
+	})
+
+	return doc.Find("body").Html()
+}
+
+func replaceCheckBox(src string) (string, error) {
+	sr := strings.NewReader(src)
+	doc, err := goquery.NewDocumentFromReader(sr)
+	if err != nil {
+		return src, err
+	}
+
+	doc.Find("li").Each(func(i int, li *goquery.Selection) {
+		li.Contents().Each(func(j int, c *goquery.Selection) {
+			if goquery.NodeName(c) == "#text" {
+				if c.Text()[:3] == "[ ]" {
+					c.ReplaceWithHtml("<input type=\"checkbox\">" + c.Text()[3:])
+					li.AddClass("task-list-item")
+				} else if c.Text()[:3] == "[x]" {
+					c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + c.Text()[3:])
+					li.AddClass("task-list-item")
+				}
+			}
+		})
+	})
+
+	return doc.Find("body").Html()
+}
+
+func replaceTableSpan(src string) (string, error) {
+	sr := strings.NewReader(src)
+	doc, err := goquery.NewDocumentFromReader(sr)
+	if err != nil {
+		return src, err
+	}
+
+	re := regexp.MustCompile("\u00a6\\s*")
+
+	doc.Find("table").Each(func(i int, tbl *goquery.Selection) {
+		tbl.Find("tbody").Each(func(j int, tbody *goquery.Selection) {
+			trs := tbody.Find("tr")
+			// colspan
+			colmax := 0
+			trs.Each(func(k int, tr *goquery.Selection) {
+				tds := tr.Find("td")
+				colmns := tds.Length()
+				if colmns > colmax {
+					colmax = colmns
+				}
+				col := 0
+				tds.Each(func(l int, td *goquery.Selection) {
+					col++
+					td.Contents().Each(func(m int, c *goquery.Selection) {
+						cnt := len(re.FindAllIndex([]byte(c.Text()), -1))
+						if cnt > 0 {
+							td.SetAttr("colspan", strconv.Itoa(cnt+1))
+							c.ReplaceWithHtml(re.ReplaceAllString(c.Text(), ""))
+							col += cnt
+						}
+					})
+					if col > colmns {
+						td.SetAttr("hidden", "")
+					}
+				})
+			})
+			// rowspan
+			for m := 0; m < colmax; m++ {
+				var root *goquery.Selection
+				cnt := 0
+				trs.Each(func(k int, tr *goquery.Selection) {
+					tr.Find("td").Each(func(l int, td *goquery.Selection) {
+						if l == m {
+							atd := getActualTD(tr, l)
+							if k == 0 {
+								root = atd
+							} else {
+								if atd.Text() != "" {
+									cnt = 0
+									root = atd
+								} else {
+									cnt++
+									root.SetAttr("rowspan", strconv.Itoa(cnt+1))
+									atd.SetAttr("hidden", "")
+								}
+							}
+						}
+					})
+				})
+			}
+			// remove hidden <td>
+			tbody.Find("tr>td").Each(func(i int, td *goquery.Selection) {
+				if _, hidden := td.Attr("hidden"); hidden {
+					td.Remove()
+				}
+			})
+		})
+		// remove empty header
+		empty := true
+		tbl.Find("thead").Each(func(i int, thead *goquery.Selection) {
+			thead.Find("tr>th").EachWithBreak(func(j int, th *goquery.Selection) bool {
+				if th.Text() != "" {
+					empty = false
+					return false
+				}
+				return true
+			})
+			if empty {
+				thead.Remove()
+			}
+		})
+	})
+
+	return doc.Find("body").Html()
+}
+
+func getActualTD(tr *goquery.Selection, index int) *goquery.Selection {
+	pos := 0
+	var result *goquery.Selection
+	tr.Find("td").EachWithBreak(func(i int, td *goquery.Selection) bool {
+		cs, _ := strconv.Atoi(td.AttrOr("colspan", "1"))
+		pos += cs
+		if pos >= index+1 {
+			result = td
+			return false
+		}
+		return true
+	})
+
+	return result
 }
