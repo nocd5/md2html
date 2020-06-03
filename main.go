@@ -481,6 +481,20 @@ func replaceTableSpan(src string) (string, error) {
 				}
 			})
 		})
+		// remove empty header
+		empty := true
+		tbl.Find("thead").Each(func(i int, thead *goquery.Selection) {
+			thead.Find("tr>th").EachWithBreak(func(j int, th *goquery.Selection) bool {
+				if th.Text() != "" {
+					empty = false
+					return false
+				}
+				return true
+			})
+			if empty {
+				thead.Remove()
+			}
+		})
 	})
 
 	return doc.Find("body").Html()
