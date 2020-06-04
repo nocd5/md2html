@@ -5,12 +5,17 @@ var sass = require('gulp-sass');
 var cleanCss = require('gulp-clean-css');
 var jsonTransform = require('gulp-json-transform');
 var jsonSass = require('gulp-json-sass');
+var del = require('del');
 
 var paths = {
   'src': './src/',
   'js': './assets/',
   'css': './assets/',
 }
+
+gulp.task('clean', function() {
+    return del(['assets']);
+});
 
 gulp.task('js', function() {
   return gulp.src(paths.src + '**/*.js')
@@ -73,4 +78,4 @@ gulp.task('css', function() {
     .pipe(gulp.dest(paths.css));
 });
 
-gulp.task('default', gulp.series(['json2js', 'json2sass', 'js', 'css', 'scss']));
+gulp.task('default', gulp.series(['clean', 'json2js', 'json2sass', 'js', 'css', 'scss']));

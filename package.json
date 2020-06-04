@@ -4,6 +4,7 @@
   "description": "Markdown to single HTML converter",
   "main": "gulpfile.js",
   "devDependencies": {
+    "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat-json": "^1.0.0",
