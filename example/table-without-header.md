@@ -1,4 +1,7 @@
-# Table without header
+# Table Without Header Sample
+
+This feature is enabled with `--tablespan/-s` option
+
 
 ```markdown
 |      |      |
