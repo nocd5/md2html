@@ -87,6 +87,8 @@ $ go install
   ([License](https://github.com/jessevdk/go-flags/blob/master/LICENSE))
 - [russross/blackfriday](https://github.com/russross/blackfriday)
   ([License](https://github.com/russross/blackfriday/blob/master/LICENSE.txt))
+- [PuerkitoBio/goquery](https://github.com/PuerkitoBio/goquery)
+  ([License](https://raw.githubusercontent.com/PuerkitoBio/goquery/master/LICENSE))
 
 #### JS
 
