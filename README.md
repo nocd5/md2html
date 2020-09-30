@@ -1,6 +1,6 @@
 # md2html
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vvq8grrjy07sfxq9/branch/master?svg=true)](https://ci.appveyor.com/project/nocd5/md2html/branch/master)
+[![Build status](https://github.com/nocd5/md2html/workflows/Build/badge.svg?branch=master)](https://github.com/nocd5/md2html/actions?query=workflow%3ABuild+branch%3Amaster)
 
 Markdown to single HTML converter.
 

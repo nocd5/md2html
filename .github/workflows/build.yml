@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        GOOS: [windows, linux]
+        GOARCH: [386, amd64]
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Set Envs
+        id: set_envs
+        run: |
+          echo "::set-env name=GITHUB_SHA_7::$(expr substr ${{ github.sha }} 1 7)"
+          echo "::set-env name=GOEXE::$(GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go env GOEXE)"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+          fi
+
+      - name: Build
+        run: GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -v -ldflags="-s -w" .
+
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: md2html_${{ env.GITHUB_SHA_7 }}_${{ matrix.GOOS }}_${{ matrix.GOARCH }}${{ env.GOEXE }}
+          path: md2html${{ env.GOEXE }}
