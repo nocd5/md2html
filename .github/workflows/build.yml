@@ -26,6 +26,11 @@ jobs:
         run: |
           echo "::set-env name=GITHUB_SHA_7::$(expr substr ${{ github.sha }} 1 7)"
           echo "::set-env name=GOEXE::$(GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go env GOEXE)"
+          if [ -f go.mod ]; then
+            echo "::set-env name=MODULE_NAME::$(go mod why | head -1 | sed 's/.*\///')"
+          else
+            echo "::set-env name=MODULE_NAME::${GITHUB_REPOSITORY#*/}"
+          fi
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -44,5 +49,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
-          name: md2html_${{ env.GITHUB_SHA_7 }}_${{ matrix.GOOS }}_${{ matrix.GOARCH }}${{ env.GOEXE }}
-          path: md2html${{ env.GOEXE }}
+          name: ${{ env.MODULE_NAME }}_${{ env.GITHUB_SHA_7 }}_${{ matrix.GOOS }}_${{ matrix.GOARCH }}${{ env.GOEXE }}
+          path: ${{ env.MODULE_NAME }}${{ env.GOEXE }}
