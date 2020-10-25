@@ -400,12 +400,14 @@ func replaceCheckBox(src string) (string, error) {
 	doc.Find("li").Each(func(i int, li *goquery.Selection) {
 		li.Contents().Each(func(j int, c *goquery.Selection) {
 			if goquery.NodeName(c) == "#text" {
-				if c.Text()[:3] == "[ ]" {
-					c.ReplaceWithHtml("<input type=\"checkbox\">" + c.Text()[3:])
-					li.AddClass("task-list-item")
-				} else if c.Text()[:3] == "[x]" {
-					c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + c.Text()[3:])
-					li.AddClass("task-list-item")
+				if t := c.Text(); len(t) >= 3 {
+					if c.Text()[:3] == "[ ]" {
+						c.ReplaceWithHtml("<input type=\"checkbox\">" + c.Text()[3:])
+						li.AddClass("task-list-item")
+					} else if c.Text()[:3] == "[x]" {
+						c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + c.Text()[3:])
+						li.AddClass("task-list-item")
+					}
 				}
 			}
 		})
