@@ -1,6 +1,7 @@
 # md2html
 
 [![Build status](https://github.com/nocd5/md2html/workflows/Build/badge.svg?branch=master)](https://github.com/nocd5/md2html/actions?query=workflow%3ABuild+branch%3Amaster)
+![Test status](https://github.com/nocd5/md2html/workflows/Test/badge.svg?branch=master)
 
 Markdown to single HTML converter.
 
