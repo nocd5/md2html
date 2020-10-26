@@ -401,11 +401,11 @@ func replaceCheckBox(src string) (string, error) {
 		li.Contents().Each(func(j int, c *goquery.Selection) {
 			if goquery.NodeName(c) == "#text" {
 				if t := c.Text(); len(t) >= 3 {
-					if c.Text()[:3] == "[ ]" {
-						c.ReplaceWithHtml("<input type=\"checkbox\">" + c.Text()[3:])
+					if t[:3] == "[ ]" {
+						c.ReplaceWithHtml("<input type=\"checkbox\">" + t[3:])
 						li.AddClass("task-list-item")
-					} else if c.Text()[:3] == "[x]" {
-						c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + c.Text()[3:])
+					} else if t[:3] == "[x]" {
+						c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + t[3:])
 						li.AddClass("task-list-item")
 					}
 				}
