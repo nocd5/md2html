@@ -24,12 +24,12 @@ jobs:
       - name: Set Envs
         id: set_envs
         run: |
-          echo "::set-env name=GITHUB_SHA_7::$(expr substr ${{ github.sha }} 1 7)"
-          echo "::set-env name=GOEXE::$(GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go env GOEXE)"
+          echo "GITHUB_SHA_7=$(expr substr ${{ github.sha }} 1 7)" >> $GITHUB_ENV
+          echo "GOEXE=$(GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go env GOEXE)" >> $GITHUB_ENV
           if [ -f go.mod ]; then
-            echo "::set-env name=MODULE_NAME::$(go mod why | head -1 | sed 's/.*\///')"
+            echo "MODULE_NAME=$(go mod why | head -1 | sed 's/.*\///')" >> $GITHUB_ENV
           else
-            echo "::set-env name=MODULE_NAME::${GITHUB_REPOSITORY#*/}"
+            echo "MODULE_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           fi
 
       - name: Check out code into the Go module directory
