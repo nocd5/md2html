@@ -24,6 +24,7 @@ type Options struct {
 	MathJax    bool   `long:"mathjax" short:"m" description:"use MathJax"`
 	Favicon    string `long:"favicon" short:"f" description:"use favicon"`
 	TableSpan  bool   `long:"span" short:"s" description:"enable table row/col span"`
+	CustomCSS  string `long:"css" short:"c" description:"add custom CSS"`
 }
 
 const (
@@ -106,7 +107,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		if err := writeHtml(html, title, opts.OutputFile, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
+		if err := writeHtml(html, title, opts.OutputFile, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan, opts.CustomCSS); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
@@ -116,7 +117,7 @@ func main() {
 				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
-			if err := writeHtml(html, file, file+".html", opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
+			if err := writeHtml(html, file, file+".html", opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan, opts.CustomCSS); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
@@ -197,7 +198,7 @@ func renderHtmlConcat(inputs []string, embed bool) (string, error) {
 	return html, nil
 }
 
-func writeHtml(html, title, output string, toc, mathjax bool, favicon string, tablespan bool) error {
+func writeHtml(html, title, output string, toc, mathjax bool, favicon string, tablespan bool, customcss string) error {
 	var err error
 
 	js := string(js_bytes[:len(js_bytes)])
@@ -240,6 +241,20 @@ func writeHtml(html, title, output string, toc, mathjax bool, favicon string, ta
 		if err != nil {
 			return err
 		}
+	}
+
+	if len(customcss) > 0 {
+		fi, err := os.Open(customcss)
+		if err != nil {
+			return err
+		}
+		defer fi.Close()
+
+		c, err := ioutil.ReadAll(fi)
+		if err != nil {
+			return err
+		}
+		css += "<style type=\"text/css\">\n" + string(c) + "</style>\n"
 	}
 
 	fo, err := os.Create(output)
