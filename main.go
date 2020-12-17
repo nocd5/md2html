@@ -99,108 +99,65 @@ func main() {
 	}
 
 	if len(opts.OutputFile) > 0 {
-		if err := writeHtmlConcat(files, opts.OutputFile, opts.EmbedImage, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
+		re := regexp.MustCompile(filepath.Ext(opts.OutputFile) + "$")
+		title := filepath.Base(re.ReplaceAllString(opts.OutputFile, ""))
+		html, err := renderHtmlConcat(files, opts.EmbedImage)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		if err := writeHtml(html, title, opts.OutputFile, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	} else {
 		for _, file := range files {
-			if err := writeHtml(file, file+".html", opts.EmbedImage, opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
+			html, err := renderHtml(file, opts.EmbedImage)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			if err := writeHtml(html, file, file+".html", opts.TOC, opts.MathJax, opts.Favicon, opts.TableSpan); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}
 	}
 }
 
-func writeHtml(input, output string, embed, toc, mathjax bool, favicon string, tablespan bool) error {
+func renderHtml(input string, embed bool) (string, error) {
+	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: commonHtmlFlags,
+	})
+	opt := []blackfriday.Option{
+		blackfriday.WithRenderer(renderer),
+		blackfriday.WithExtensions(extensions),
+	}
+
 	fi, err := os.Open(input)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer fi.Close()
 
 	md, err := ioutil.ReadAll(fi)
 	if err != nil {
-		return err
-	}
-
-	js := string(js_bytes[:len(js_bytes)])
-	if mathjax {
-		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
-		js += string(mathjax_bytes[:len(mathjax_bytes)])
-	}
-	css := string(css_bytes[:len(css_bytes)])
-	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-		Flags: commonHtmlFlags,
-	})
-	opt := []blackfriday.Option{
-		blackfriday.WithRenderer(renderer),
-		blackfriday.WithExtensions(extensions),
+		return "", err
 	}
 	html, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if embed {
 		html, err = embedImage(html, filepath.Dir(input))
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
-	tt := ""
-	if toc {
-		tt = toc_tag
-	}
-
-	favi := ""
-	if len(favicon) > 0 {
-		cwd, _ := os.Getwd()
-		b, err := decodeBase64(favicon, cwd)
-		if err != nil {
-			return err
-		}
-		favi = fmt.Sprintf(favicon_tag, b)
-	}
-
-	if mathjax {
-		html, err = replaceMathJaxCodeBlock(html)
-		if err != nil {
-			return err
-		}
-	}
-
-	html, err = replaceCheckBox(html)
-	if err != nil {
-		return err
-	}
-
-	if tablespan {
-		html, err = replaceTableSpan(html)
-		if err != nil {
-			return err
-		}
-	}
-
-	fo, err := os.Create(output)
-	if err != nil {
-		return err
-	}
-	defer fo.Close()
-
-	fmt.Fprintf(fo, template, favi, input, js+"\n"+css, tt, html)
-	return nil
+	return html, nil
 }
 
-func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, favicon string, tablespan bool) error {
-	js := string(js_bytes[:len(js_bytes)])
-	if mathjax {
-		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
-		js += string(mathjax_bytes[:len(mathjax_bytes)])
-	}
-	css := string(css_bytes[:len(css_bytes)])
-	html := ""
-
+func renderHtmlConcat(inputs []string, embed bool) (string, error) {
 	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 		Flags: commonHtmlFlags,
 	})
@@ -208,34 +165,64 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, f
 		blackfriday.WithRenderer(renderer),
 		blackfriday.WithExtensions(extensions),
 	}
+
+	html := ""
 	for _, input := range inputs {
 		fi, err := os.Open(input)
 		if err != nil {
-			return err
+			return "", err
 		}
 		defer fi.Close()
 
 		md, err := ioutil.ReadAll(fi)
 		if err != nil {
-			return err
+			return "", err
 		}
 
 		h, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
 		if err != nil {
-			return err
+			return "", err
 		}
 
 		if embed {
 			h, err = embedImage(h, filepath.Dir(input))
 			if err != nil {
-				return err
+				return "", err
 			}
 		}
 
 		html += h
 	}
 
+	return html, nil
+}
+
+func writeHtml(html, title, output string, toc, mathjax bool, favicon string, tablespan bool) error {
 	var err error
+
+	js := string(js_bytes[:len(js_bytes)])
+	if mathjax {
+		js += string(mathjax_cfg_bytes[:len(mathjax_cfg_bytes)])
+		js += string(mathjax_bytes[:len(mathjax_bytes)])
+	}
+
+	css := string(css_bytes[:len(css_bytes)])
+
+	tt := ""
+	if toc {
+		tt = toc_tag
+	}
+
+	favi := ""
+	if len(favicon) > 0 {
+		cwd, _ := os.Getwd()
+		b, err := decodeBase64(favicon, cwd)
+		if err != nil {
+			return err
+		}
+		favi = fmt.Sprintf(favicon_tag, b)
+	}
+
 	if mathjax {
 		html, err = replaceMathJaxCodeBlock(html)
 		if err != nil {
@@ -253,24 +240,6 @@ func writeHtmlConcat(inputs []string, output string, embed, toc, mathjax bool, f
 		if err != nil {
 			return err
 		}
-	}
-
-	re := regexp.MustCompile(filepath.Ext(output) + "$")
-	title := filepath.Base(re.ReplaceAllString(output, ""))
-
-	tt := ""
-	if toc {
-		tt = toc_tag
-	}
-
-	favi := ""
-	if len(favicon) > 0 {
-		cwd, _ := os.Getwd()
-		b, err := decodeBase64(favicon, cwd)
-		if err != nil {
-			return err
-		}
-		favi = fmt.Sprintf(favicon_tag, b)
 	}
 
 	fo, err := os.Create(output)
@@ -293,33 +262,13 @@ func embedImage(src, parent string) (string, error) {
 	dest := src
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
-		img_path := img_src
-		if !filepath.IsAbs(img_src) {
-			img_path = filepath.Join(parent, img_src)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				continue
-			}
-		}
 
-		f, err := os.Open(img_path)
-		if err != nil {
-			pathErr := err.(*os.PathError)
-			errno := pathErr.Err.(syscall.Errno)
-			if errno != 0x7B { // suppress ERROR_INVALID_NAME
-				fmt.Fprintln(os.Stderr, err)
-			}
-			continue
-		}
-		defer f.Close()
-
-		d, err := ioutil.ReadAll(f)
+		b64img, err := decodeBase64(img_src, parent)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			continue
 		}
 
-		b64img := base64.StdEncoding.EncodeToString(d)
 		re_replace, err := regexp.Compile(`(<img[\S\s]+?src=")` + regexp.QuoteMeta(img_src) + `("[\S\s]*?/?>)`)
 		if err != nil {
 			return src, err
