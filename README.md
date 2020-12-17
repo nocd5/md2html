@@ -51,7 +51,11 @@ if `-o` option was abbreviated, `input Markdown file name` + `.html` will be use
 
 ### Favicon
 
-`-f/--favicon` option enables embedding icon for favicon
+`-f/--favicon <path/to/icon>` option enables embedding icon for favicon
+
+### Add custom CSS
+
+`-c/--css <path/to/css>` option enables additional CSS
 
 ## Example
 
