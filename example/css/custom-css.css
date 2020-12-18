@@ -1,0 +1,16 @@
+img.vinyl {
+    margin: 12px;
+}
+
+img.vinyl.ep {
+    animation: spin calc(60s / 45) linear infinite;
+}
+
+img.vinyl.lp {
+    animation: spin calc(60s / (33 + 1 / 3)) linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+}
