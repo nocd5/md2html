@@ -36,6 +36,24 @@ code[class*=language-],pre[class*=language-]{color:#000;background:0 0;text-shad
 <style type="text/css">
 #markdown-toc{overflow-y:auto;color:#fff;background:#333;width:20%;min-width:200px;height:100vh;position:sticky;top:0;box-shadow:0 0 5px 0 #000;transition:width .5s ease-in-out,min-width .5s ease-in-out}#markdown-toc ul{padding:0;padding-top:1em;list-style:none}#markdown-toc a{color:#fff;text-decoration:none;display:block;width:100%;line-height:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#markdown-toc [class*=toc-h]:hover{background:#444}#markdown-toc [class*=toc-h].toc-active{background:#48c}#markdown-toc [class*=toc-h] :before{content:""}#markdown-toc .toc-h1{font-size:1em}#markdown-toc .toc-h1 :before{padding-left:calc(1em + 1em)}#markdown-toc .toc-h2{font-size:.9375em}#markdown-toc .toc-h2 :before{padding-left:calc(2em + 1em)}#markdown-toc .toc-h3{font-size:.875em}#markdown-toc .toc-h3 :before{padding-left:calc(3em + 1em)}#markdown-toc .toc-h4{font-size:.8125em}#markdown-toc .toc-h4 :before{padding-left:calc(4em + 1em)}.toc-button{position:fixed;top:.5em;margin-left:.5em;width:1em;height:1em;border-radius:50%;background:#f66;cursor:pointer;transition:transform .5s linear}.toc-button:after,.toc-button:before{transform:rotate(-45deg);position:absolute;background-color:#fff;border-radius:1em;content:""}.toc-button:before{width:75%;height:12.5%;top:43.75%;left:12.5%}.toc-button:after{width:12.5%;height:75%;top:12.5%;left:43.75%}
 </style>
+<style type="text/css">
+img.vinyl {
+    margin: 12px;
+}
+
+img.vinyl.ep {
+    animation: spin calc(60s / 45) linear infinite;
+}
+
+img.vinyl.lp {
+    animation: spin calc(60s / (33 + 1 / 3)) linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+}
+</style>
 
 </head>
 <body>
@@ -92,6 +110,115 @@ code[class*=language-],pre[class*=language-]{color:#000;background:0 0;text-shad
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEV0lEQVR42u1bTUhVQRQeLfszJSkNKn8eZU8p01XQD0iggalFkIJGxtsVLorohaK2qE2bwE2Bi4IICmojtYjQjS6E0CxwZYssCVz1Q4KpiHVO97zedLkzc+5Ded7LDHzweHxv5p1v/r57Zq4QtijLNkBRCFAIyPETeCNgHLAE+B0SLAKGAUdNwd8FLIcocC8h4rqeTwTfD6gFlAGiAUc5xTZMsS0ADnkJMC4FH8aSCRilGJ97LXiJOV8rfX8K0K1AnBYZQUp3KnhdgBPE2wpo19QZA2QR97SGd4MWNywHDW3L8/4yxThDgvwrRdI8KZOCN60HHwEbAZ8MvAUS6TFjnt4GnGS0jUM6G/CVMe8PUEz19N0sYINKgCh9181cWCqZvFbAWwZvAHCTwfsFKGW2fVHq1BUXoIrJOy+tMzoMMgWYtwJYAawAVoDVFCDOqBi3qojg2eezgDcM3kvAdQbvu+t/69CUigBFtM/rgr9P3EeGP/Ce9uwYeQIV7yegBrAH8NlQ5y0yMy8MvDGRfBr0JYAgk1NJw9yNiMtmRhW8Cldj+DlXgSyJt07D2+JystkabobL2bIFiBoc3jL1PAb/zNALE4DtIv3FlwCdzPkV9TkPAyPAauwCVgArgBXAChAYAbqYgVUweS1BEwDTWAvC7PCwogkD7wdgb9AEEPS5lYavG+jts4mHJqdJwWtZI8H7FgATmJjDwzTWuAfwwSZGXEx0jip4+Pt7wnGMRwBDCh7itXCe8NDqPtHwsO1z1Hanoe1e4dhq3wK0M+Y1TpGdjKmSyDYPMXhPAZcYvC/UNucEq26t7AI2IWIFsAJYAawAQREgxqgYc3h5VKGJe4z2eRPvAaCNwftABmyewa1ORQDMz+FB5QD1ihuYva0h7hnAKwUPf5+4lFBK+/ygAhh8AWA94I6Gh20fpzpbDW1fEcm8oG8rnM5ST1PBCyjoLuLhBYgOBa8HcDhVK5zu4E1nDSPCSXd/Y7jVqqAJsCYWQSuAFcAKYAWwAqSpcI7mMc9YzBSgOWgCoMkZoV72AgZ/TThptj4KyIs3J5yLn7mpCoC5uRIFdovkZUO0roUKHvbSZqnOfE2deRIvh4a4F4pdbUcUvH3COeIXqQiANzBNlxDxcgL6bNNDDl522CGcBOaSYV6jt0d7a3J4fRS86dbJlHCeL3wLsBrH46MMHj7YdDB4s9Tzfg5lbD7ACmAFsAJYAUQaj8e51+V7GLw52uc5bbeZBCiUyOX0Hb5psWioeIz24ncM24pt9DL+LObwMI1lOm/sJ5MzxWi7hGJqUAmQIwXbKH1/gIaPF5pE8gZmPhkYLx6qv594eEpbp6mzWiQTmFUaXrNkbwtodKnaLpHiuUoxTov/L1D+LYm3qoaF632akJRNgEmK8aEXQR7y6NjwBaN6mjdBRgP1/KTLQXqWuOCd9QcVGPwF01DBlwrxvboZ+kEYME3DPuJnzmTSShkGZIRwTVuZ8gcKL30jxS0edwAAAABJRU5ErkJggg==" width="48" height="24" alt="logo/nocd5"/>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEV0lEQVR42u1bTUhVQRQeLfszJSkNKn8eZU8p01XQD0iggalFkIJGxtsVLorohaK2qE2bwE2Bi4IICmojtYjQjS6E0CxwZYssCVz1Q4KpiHVO97zedLkzc+5Ded7LDHzweHxv5p1v/r57Zq4QtijLNkBRCFAIyPETeCNgHLAE+B0SLAKGAUdNwd8FLIcocC8h4rqeTwTfD6gFlAGiAUc5xTZMsS0ADnkJMC4FH8aSCRilGJ97LXiJOV8rfX8K0K1AnBYZQUp3KnhdgBPE2wpo19QZA2QR97SGd4MWNywHDW3L8/4yxThDgvwrRdI8KZOCN60HHwEbAZ8MvAUS6TFjnt4GnGS0jUM6G/CVMe8PUEz19N0sYINKgCh9181cWCqZvFbAWwZvAHCTwfsFKGW2fVHq1BUXoIrJOy+tMzoMMgWYtwJYAawAVoDVFCDOqBi3qojg2eezgDcM3kvAdQbvu+t/69CUigBFtM/rgr9P3EeGP/Ce9uwYeQIV7yegBrAH8NlQ5y0yMy8MvDGRfBr0JYAgk1NJw9yNiMtmRhW8Cldj+DlXgSyJt07D2+JystkabobL2bIFiBoc3jL1PAb/zNALE4DtIv3FlwCdzPkV9TkPAyPAauwCVgArgBXAChAYAbqYgVUweS1BEwDTWAvC7PCwogkD7wdgb9AEEPS5lYavG+jts4mHJqdJwWtZI8H7FgATmJjDwzTWuAfwwSZGXEx0jip4+Pt7wnGMRwBDCh7itXCe8NDqPtHwsO1z1Hanoe1e4dhq3wK0M+Y1TpGdjKmSyDYPMXhPAZcYvC/UNucEq26t7AI2IWIFsAJYAawAQREgxqgYc3h5VKGJe4z2eRPvAaCNwftABmyewa1ORQDMz+FB5QD1ihuYva0h7hnAKwUPf5+4lFBK+/ygAhh8AWA94I6Gh20fpzpbDW1fEcm8oG8rnM5ST1PBCyjoLuLhBYgOBa8HcDhVK5zu4E1nDSPCSXd/Y7jVqqAJsCYWQSuAFcAKYAWwAqSpcI7mMc9YzBSgOWgCoMkZoV72AgZ/TThptj4KyIs3J5yLn7mpCoC5uRIFdovkZUO0roUKHvbSZqnOfE2deRIvh4a4F4pdbUcUvH3COeIXqQiANzBNlxDxcgL6bNNDDl522CGcBOaSYV6jt0d7a3J4fRS86dbJlHCeL3wLsBrH46MMHj7YdDB4s9Tzfg5lbD7ACmAFsAJYAUQaj8e51+V7GLw52uc5bbeZBCiUyOX0Hb5psWioeIz24ncM24pt9DL+LObwMI1lOm/sJ5MzxWi7hGJqUAmQIwXbKH1/gIaPF5pE8gZmPhkYLx6qv594eEpbp6mzWiQTmFUaXrNkbwtodKnaLpHiuUoxTov/L1D+LYm3qoaF632akJRNgEmK8aEXQR7y6NjwBaN6mjdBRgP1/KTLQXqWuOCd9QcVGPwF01DBlwrxvboZ+kEYME3DPuJnzmTSShkGZIRwTVuZ8gcKL30jxS0edwAAAABJRU5ErkJggg==" width="24" height="36" alt="logo/nocd5"/>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEV0lEQVR42u1bTUhVQRQeLfszJSkNKn8eZU8p01XQD0iggalFkIJGxtsVLorohaK2qE2bwE2Bi4IICmojtYjQjS6E0CxwZYssCVz1Q4KpiHVO97zedLkzc+5Ded7LDHzweHxv5p1v/r57Zq4QtijLNkBRCFAIyPETeCNgHLAE+B0SLAKGAUdNwd8FLIcocC8h4rqeTwTfD6gFlAGiAUc5xTZMsS0ADnkJMC4FH8aSCRilGJ97LXiJOV8rfX8K0K1AnBYZQUp3KnhdgBPE2wpo19QZA2QR97SGd4MWNywHDW3L8/4yxThDgvwrRdI8KZOCN60HHwEbAZ8MvAUS6TFjnt4GnGS0jUM6G/CVMe8PUEz19N0sYINKgCh9181cWCqZvFbAWwZvAHCTwfsFKGW2fVHq1BUXoIrJOy+tMzoMMgWYtwJYAawAVoDVFCDOqBi3qojg2eezgDcM3kvAdQbvu+t/69CUigBFtM/rgr9P3EeGP/Ce9uwYeQIV7yegBrAH8NlQ5y0yMy8MvDGRfBr0JYAgk1NJw9yNiMtmRhW8Cldj+DlXgSyJt07D2+JystkabobL2bIFiBoc3jL1PAb/zNALE4DtIv3FlwCdzPkV9TkPAyPAauwCVgArgBXAChAYAbqYgVUweS1BEwDTWAvC7PCwogkD7wdgb9AEEPS5lYavG+jts4mHJqdJwWtZI8H7FgATmJjDwzTWuAfwwSZGXEx0jip4+Pt7wnGMRwBDCh7itXCe8NDqPtHwsO1z1Hanoe1e4dhq3wK0M+Y1TpGdjKmSyDYPMXhPAZcYvC/UNucEq26t7AI2IWIFsAJYAawAQREgxqgYc3h5VKGJe4z2eRPvAaCNwftABmyewa1ORQDMz+FB5QD1ihuYva0h7hnAKwUPf5+4lFBK+/ygAhh8AWA94I6Gh20fpzpbDW1fEcm8oG8rnM5ST1PBCyjoLuLhBYgOBa8HcDhVK5zu4E1nDSPCSXd/Y7jVqqAJsCYWQSuAFcAKYAWwAqSpcI7mMc9YzBSgOWgCoMkZoV72AgZ/TThptj4KyIs3J5yLn7mpCoC5uRIFdovkZUO0roUKHvbSZqnOfE2deRIvh4a4F4pdbUcUvH3COeIXqQiANzBNlxDxcgL6bNNDDl522CGcBOaSYV6jt0d7a3J4fRS86dbJlHCeL3wLsBrH46MMHj7YdDB4s9Tzfg5lbD7ACmAFsAJYAUQaj8e51+V7GLw52uc5bbeZBCiUyOX0Hb5psWioeIz24ncM24pt9DL+LObwMI1lOm/sJ5MzxWi7hGJqUAmQIwXbKH1/gIaPF5pE8gZmPhkYLx6qv594eEpbp6mzWiQTmFUaXrNkbwtodKnaLpHiuUoxTov/L1D+LYm3qoaF632akJRNgEmK8aEXQR7y6NjwBaN6mjdBRgP1/KTLQXqWuOCd9QcVGPwF01DBlwrxvboZ+kEYME3DPuJnzmTSShkGZIRwTVuZ8gcKL30jxS0edwAAAABJRU5ErkJggg==" width="24" height="48" alt="logo/nocd5"/></p>
+
+<h1 id="syntax-highlight-sample">Syntax Highlight Sample</h1>
+
+<h2 id="c">C</h2>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main(){
+    printf(&#34;Hello World!\n&#34;);
+    return 0;
+}
+</code></pre>
+
+<h2 id="ruby">Ruby</h2>
+
+<pre><code class="language-ruby">print &#34;Hello World!\n&#34;
+</code></pre>
+
+<h2 id="javascript">JavaScript</h2>
+
+<pre><code class="language-js">console.log(&#34;Hello World!&#34;);
+</code></pre>
+
+<h2 id="go">Go</h2>
+
+<pre><code class="language-go">package main
+
+import (
+	&#34;fmt&#34;
+	&#34;os&#34;
+)
+
+func main() {
+	fmt.Fprint(os.Stdout, &#34;Hello World!\n&#34;)
+}
+</code></pre>
+
+<h2 id="vim">Vim</h2>
+
+<pre><code class="language-vim">:echo &#34;Hello World!&#34;&lt;CR&gt;
+</code></pre>
+
+<h1 id="task-list-sample">Task List Sample</h1>
+
+<pre><code class="language-markdown">* [ ] Some Task 1
+	* [x] Sub Task 1.1
+	* [x] Sub Task 1.2
+	* [ ] Sub Task 1.3
+	* [ ] Sub Task 1.4
+* [ ] Some Task 2
+	* [x] Sub Task 2.1
+	* [x] Sub Task 2.2
+	* [ ] Sub Task 2.3
+		* [x] Sub-Sub Task 2.3.1
+		* [ ] Sub-Sub Task 2.3.2
+	* [ ] Sub Task 2.4
+* Some Item 1
+* [x] Some Task 3
+	* [x] Sub Task 3.1
+- Some Item 2
+	- Sub Item 2.1
+		- Sub Item 2.1.1
+- [x] Some Task 4
+	- [x] Sub Task 4.1
+</code></pre>
+
+<ul>
+<li class="task-list-item"><input type="checkbox"/> Some Task 1
+
+<ul>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 1.1</li>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 1.2</li>
+<li class="task-list-item"><input type="checkbox"/> Sub Task 1.3</li>
+<li class="task-list-item"><input type="checkbox"/> Sub Task 1.4</li>
+</ul></li>
+<li class="task-list-item"><input type="checkbox"/> Some Task 2
+
+<ul>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 2.1</li>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 2.2</li>
+<li class="task-list-item"><input type="checkbox"/> Sub Task 2.3
+
+<ul>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub-Sub Task 2.3.1</li>
+<li class="task-list-item"><input type="checkbox"/> Sub-Sub Task 2.3.2</li>
+</ul></li>
+<li class="task-list-item"><input type="checkbox"/> Sub Task 2.4</li>
+</ul></li>
+<li>Some Item 1</li>
+<li class="task-list-item"><input type="checkbox" checked=""/> Some Task 3
+
+<ul>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 3.1</li>
+</ul></li>
+<li>Some Item 2
+
+<ul>
+<li>Sub Item 2.1
+
+<ul>
+<li>Sub Item 2.1.1</li>
+</ul></li>
+</ul></li>
+<li class="task-list-item"><input type="checkbox" checked=""/> Some Task 4
+
+<ul>
+<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 4.1</li>
+</ul></li>
+</ul>
 
 <h1 id="mathjax-sample">MathJax Sample</h1>
 
@@ -165,73 +292,6 @@ x = \frac {-b \pm \sqrt {b^2 - 4ac}} {2a} \\
 ax^2 + bx + c = 0 \\
 x = \frac {-b \pm \sqrt {b^2 - 4ac}} {2a} \\
 \]</p>
-
-<h1 id="syntax-highlight-sample">Syntax Highlight Sample</h1>
-
-<h2 id="c">C</h2>
-
-<pre><code class="language-c">#include &lt;stdio.h&gt;
-
-int main(){
-    printf(&#34;Hello World!\n&#34;);
-    return 0;
-}
-</code></pre>
-
-<h2 id="ruby">Ruby</h2>
-
-<pre><code class="language-ruby">print &#34;Hello World!\n&#34;
-</code></pre>
-
-<h2 id="javascript">JavaScript</h2>
-
-<pre><code class="language-js">console.log(&#34;Hello World!&#34;);
-</code></pre>
-
-<h2 id="go">Go</h2>
-
-<pre><code class="language-go">package main
-
-import (
-	&#34;fmt&#34;
-	&#34;os&#34;
-)
-
-func main() {
-	fmt.Fprint(os.Stdout, &#34;Hello World!\n&#34;)
-}
-</code></pre>
-
-<h2 id="vim">Vim</h2>
-
-<pre><code class="language-vim">:echo &#34;Hello World!&#34;&lt;CR&gt;
-</code></pre>
-
-<h1 id="table-without-header-sample">Table Without Header Sample</h1>
-
-<p>This feature is enabled with <code>-s/--span</code> option</p>
-
-<pre><code class="language-markdown">|      |      |
-|------|------|
-| foo  | bar  |
-| hoge | fuga |
-</code></pre>
-
-<table>
-
-
-<tbody>
-<tr>
-<td>foo</td>
-<td>bar</td>
-</tr>
-
-<tr>
-<td>hoge</td>
-<td>fuga</td>
-</tr>
-</tbody>
-</table>
 
 <h1 id="table-span-sample">Table Span Sample</h1>
 
@@ -650,73 +710,69 @@ func main() {
 </tbody>
 </table>
 
-<h1 id="task-list-sample">Task List Sample</h1>
+<h1 id="table-without-header-sample">Table Without Header Sample</h1>
 
-<pre><code class="language-markdown">* [ ] Some Task 1
-	* [x] Sub Task 1.1
-	* [x] Sub Task 1.2
-	* [ ] Sub Task 1.3
-	* [ ] Sub Task 1.4
-* [ ] Some Task 2
-	* [x] Sub Task 2.1
-	* [x] Sub Task 2.2
-	* [ ] Sub Task 2.3
-		* [x] Sub-Sub Task 2.3.1
-		* [ ] Sub-Sub Task 2.3.2
-	* [ ] Sub Task 2.4
-* Some Item 1
-* [x] Some Task 3
-	* [x] Sub Task 3.1
-- Some Item 2
-	- Sub Item 2.1
-		- Sub Item 2.1.1
-- [x] Some Task 4
-	- [x] Sub Task 4.1
+<p>This feature is enabled with <code>-s/--span</code> option</p>
+
+<pre><code class="language-markdown">|      |      |
+|------|------|
+| foo  | bar  |
+| hoge | fuga |
 </code></pre>
 
-<ul>
-<li class="task-list-item"><input type="checkbox"/> Some Task 1
+<table>
 
-<ul>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 1.1</li>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 1.2</li>
-<li class="task-list-item"><input type="checkbox"/> Sub Task 1.3</li>
-<li class="task-list-item"><input type="checkbox"/> Sub Task 1.4</li>
-</ul></li>
-<li class="task-list-item"><input type="checkbox"/> Some Task 2
 
-<ul>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 2.1</li>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 2.2</li>
-<li class="task-list-item"><input type="checkbox"/> Sub Task 2.3
+<tbody>
+<tr>
+<td>foo</td>
+<td>bar</td>
+</tr>
 
-<ul>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub-Sub Task 2.3.1</li>
-<li class="task-list-item"><input type="checkbox"/> Sub-Sub Task 2.3.2</li>
-</ul></li>
-<li class="task-list-item"><input type="checkbox"/> Sub Task 2.4</li>
-</ul></li>
-<li>Some Item 1</li>
-<li class="task-list-item"><input type="checkbox" checked=""/> Some Task 3
+<tr>
+<td>hoge</td>
+<td>fuga</td>
+</tr>
+</tbody>
+</table>
 
-<ul>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 3.1</li>
-</ul></li>
-<li>Some Item 2
+<h1 id="custom-css-sample">Custom CSS Sample</h1>
 
-<ul>
-<li>Sub Item 2.1
+<h2 id="command-option-1">Command Option</h2>
 
-<ul>
-<li>Sub Item 2.1.1</li>
-</ul></li>
-</ul></li>
-<li class="task-list-item"><input type="checkbox" checked=""/> Some Task 4
+<pre><code class="language-bash">$ md2html example/custom-css.md -c example/css/custom-css.css
+</code></pre>
 
-<ul>
-<li class="task-list-item"><input type="checkbox" checked=""/> Sub Task 4.1</li>
-</ul></li>
-</ul>
+<h4 id="example-for-wheel-class">Example for <code>wheel</code> class</h4>
+
+<pre><code class="language-markdown">&lt;img class=&#34;vinyl ep&#34; src=&#34;img/nocd5.png&#34;&gt;
+&lt;img class=&#34;vinyl lp&#34; src=&#34;img/nocd5.png&#34;&gt;
+</code></pre>
+
+<h4 id="custom-css-for-wheel">Custom CSS for <code>wheel</code></h4>
+
+<pre><code class="language-css">/* example/css/custom-css.css */
+
+img.vinyl {
+    margin: 12px;
+}
+
+img.vinyl.ep {
+    animation: spin calc(60s / 45) linear infinite;
+}
+
+img.vinyl.lp {
+    animation: spin calc(60s / (33 + 1 / 3)) linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+}
+</code></pre>
+
+<p><img class="vinyl ep" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEV0lEQVR42u1bTUhVQRQeLfszJSkNKn8eZU8p01XQD0iggalFkIJGxtsVLorohaK2qE2bwE2Bi4IICmojtYjQjS6E0CxwZYssCVz1Q4KpiHVO97zedLkzc+5Ded7LDHzweHxv5p1v/r57Zq4QtijLNkBRCFAIyPETeCNgHLAE+B0SLAKGAUdNwd8FLIcocC8h4rqeTwTfD6gFlAGiAUc5xTZMsS0ADnkJMC4FH8aSCRilGJ97LXiJOV8rfX8K0K1AnBYZQUp3KnhdgBPE2wpo19QZA2QR97SGd4MWNywHDW3L8/4yxThDgvwrRdI8KZOCN60HHwEbAZ8MvAUS6TFjnt4GnGS0jUM6G/CVMe8PUEz19N0sYINKgCh9181cWCqZvFbAWwZvAHCTwfsFKGW2fVHq1BUXoIrJOy+tMzoMMgWYtwJYAawAVoDVFCDOqBi3qojg2eezgDcM3kvAdQbvu+t/69CUigBFtM/rgr9P3EeGP/Ce9uwYeQIV7yegBrAH8NlQ5y0yMy8MvDGRfBr0JYAgk1NJw9yNiMtmRhW8Cldj+DlXgSyJt07D2+JystkabobL2bIFiBoc3jL1PAb/zNALE4DtIv3FlwCdzPkV9TkPAyPAauwCVgArgBXAChAYAbqYgVUweS1BEwDTWAvC7PCwogkD7wdgb9AEEPS5lYavG+jts4mHJqdJwWtZI8H7FgATmJjDwzTWuAfwwSZGXEx0jip4+Pt7wnGMRwBDCh7itXCe8NDqPtHwsO1z1Hanoe1e4dhq3wK0M+Y1TpGdjKmSyDYPMXhPAZcYvC/UNucEq26t7AI2IWIFsAJYAawAQREgxqgYc3h5VKGJe4z2eRPvAaCNwftABmyewa1ORQDMz+FB5QD1ihuYva0h7hnAKwUPf5+4lFBK+/ygAhh8AWA94I6Gh20fpzpbDW1fEcm8oG8rnM5ST1PBCyjoLuLhBYgOBa8HcDhVK5zu4E1nDSPCSXd/Y7jVqqAJsCYWQSuAFcAKYAWwAqSpcI7mMc9YzBSgOWgCoMkZoV72AgZ/TThptj4KyIs3J5yLn7mpCoC5uRIFdovkZUO0roUKHvbSZqnOfE2deRIvh4a4F4pdbUcUvH3COeIXqQiANzBNlxDxcgL6bNNDDl522CGcBOaSYV6jt0d7a3J4fRS86dbJlHCeL3wLsBrH46MMHj7YdDB4s9Tzfg5lbD7ACmAFsAJYAUQaj8e51+V7GLw52uc5bbeZBCiUyOX0Hb5psWioeIz24ncM24pt9DL+LObwMI1lOm/sJ5MzxWi7hGJqUAmQIwXbKH1/gIaPF5pE8gZmPhkYLx6qv594eEpbp6mzWiQTmFUaXrNkbwtodKnaLpHiuUoxTov/L1D+LYm3qoaF632akJRNgEmK8aEXQR7y6NjwBaN6mjdBRgP1/KTLQXqWuOCd9QcVGPwF01DBlwrxvboZ+kEYME3DPuJnzmTSShkGZIRwTVuZ8gcKL30jxS0edwAAAABJRU5ErkJggg=="/>
+<img class="vinyl lp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEV0lEQVR42u1bTUhVQRQeLfszJSkNKn8eZU8p01XQD0iggalFkIJGxtsVLorohaK2qE2bwE2Bi4IICmojtYjQjS6E0CxwZYssCVz1Q4KpiHVO97zedLkzc+5Ded7LDHzweHxv5p1v/r57Zq4QtijLNkBRCFAIyPETeCNgHLAE+B0SLAKGAUdNwd8FLIcocC8h4rqeTwTfD6gFlAGiAUc5xTZMsS0ADnkJMC4FH8aSCRilGJ97LXiJOV8rfX8K0K1AnBYZQUp3KnhdgBPE2wpo19QZA2QR97SGd4MWNywHDW3L8/4yxThDgvwrRdI8KZOCN60HHwEbAZ8MvAUS6TFjnt4GnGS0jUM6G/CVMe8PUEz19N0sYINKgCh9181cWCqZvFbAWwZvAHCTwfsFKGW2fVHq1BUXoIrJOy+tMzoMMgWYtwJYAawAVoDVFCDOqBi3qojg2eezgDcM3kvAdQbvu+t/69CUigBFtM/rgr9P3EeGP/Ce9uwYeQIV7yegBrAH8NlQ5y0yMy8MvDGRfBr0JYAgk1NJw9yNiMtmRhW8Cldj+DlXgSyJt07D2+JystkabobL2bIFiBoc3jL1PAb/zNALE4DtIv3FlwCdzPkV9TkPAyPAauwCVgArgBXAChAYAbqYgVUweS1BEwDTWAvC7PCwogkD7wdgb9AEEPS5lYavG+jts4mHJqdJwWtZI8H7FgATmJjDwzTWuAfwwSZGXEx0jip4+Pt7wnGMRwBDCh7itXCe8NDqPtHwsO1z1Hanoe1e4dhq3wK0M+Y1TpGdjKmSyDYPMXhPAZcYvC/UNucEq26t7AI2IWIFsAJYAawAQREgxqgYc3h5VKGJe4z2eRPvAaCNwftABmyewa1ORQDMz+FB5QD1ihuYva0h7hnAKwUPf5+4lFBK+/ygAhh8AWA94I6Gh20fpzpbDW1fEcm8oG8rnM5ST1PBCyjoLuLhBYgOBa8HcDhVK5zu4E1nDSPCSXd/Y7jVqqAJsCYWQSuAFcAKYAWwAqSpcI7mMc9YzBSgOWgCoMkZoV72AgZ/TThptj4KyIs3J5yLn7mpCoC5uRIFdovkZUO0roUKHvbSZqnOfE2deRIvh4a4F4pdbUcUvH3COeIXqQiANzBNlxDxcgL6bNNDDl522CGcBOaSYV6jt0d7a3J4fRS86dbJlHCeL3wLsBrH46MMHj7YdDB4s9Tzfg5lbD7ACmAFsAJYAUQaj8e51+V7GLw52uc5bbeZBCiUyOX0Hb5psWioeIz24ncM24pt9DL+LObwMI1lOm/sJ5MzxWi7hGJqUAmQIwXbKH1/gIaPF5pE8gZmPhkYLx6qv594eEpbp6mzWiQTmFUaXrNkbwtodKnaLpHiuUoxTov/L1D+LYm3qoaF632akJRNgEmK8aEXQR7y6NjwBaN6mjdBRgP1/KTLQXqWuOCd9QcVGPwF01DBlwrxvboZ+kEYME3DPuJnzmTSShkGZIRwTVuZ8gcKL30jxS0edwAAAABJRU5ErkJggg=="/></p>
 
 </div>
 </div>
