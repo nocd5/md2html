@@ -5,8 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	chromahtml "github.com/alecthomas/chroma/formatters/html"
 	"github.com/jessevdk/go-flags"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
@@ -63,6 +65,12 @@ var (
 		extension.DefinitionList,
 		extension.Footnote,
 		extension.Typographer,
+		highlighting.NewHighlighting(
+			highlighting.WithStyle("github"),
+			highlighting.WithFormatOptions(
+				chromahtml.WithClasses(true),
+			),
+		),
 	}
 	parseroptions = []parser.Option{
 		parser.WithAutoHeadingID(),
