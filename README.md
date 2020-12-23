@@ -79,7 +79,7 @@ $ cd ${GOPATH}/src/github.com/nocd5/md2html
 # customize "{$GOPATH}/src/github.com/nocd5/md2html/src/" #
 ###########################################################
 
-$ npm intall && gulp
+$ npm install && gulp
 $ assets.go.rb
 $ go install
 ```
