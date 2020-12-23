@@ -99,10 +99,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: commonHtmlFlags,
+	})
+	bfopt := []blackfriday.Option{
+		blackfriday.WithRenderer(renderer),
+		blackfriday.WithExtensions(extensions),
+	}
+
 	if len(opts.OutputFile) > 0 {
 		re := regexp.MustCompile(filepath.Ext(opts.OutputFile) + "$")
 		title := filepath.Base(re.ReplaceAllString(opts.OutputFile, ""))
-		html, err := renderHtmlConcat(files, opts.EmbedImage)
+		html, err := renderHtmlConcat(files, opts.EmbedImage, bfopt)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -112,7 +120,7 @@ func main() {
 		}
 	} else {
 		for _, file := range files {
-			html, err := renderHtml(file, opts.EmbedImage)
+			html, err := renderHtml(file, opts.EmbedImage, bfopt)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
@@ -124,15 +132,7 @@ func main() {
 	}
 }
 
-func renderHtml(input string, embed bool) (string, error) {
-	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-		Flags: commonHtmlFlags,
-	})
-	opt := []blackfriday.Option{
-		blackfriday.WithRenderer(renderer),
-		blackfriday.WithExtensions(extensions),
-	}
-
+func renderHtml(input string, embed bool, opt []blackfriday.Option) (string, error) {
 	fi, err := os.Open(input)
 	if err != nil {
 		return "", err
@@ -158,15 +158,7 @@ func renderHtml(input string, embed bool) (string, error) {
 	return html, nil
 }
 
-func renderHtmlConcat(inputs []string, embed bool) (string, error) {
-	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-		Flags: commonHtmlFlags,
-	})
-	opt := []blackfriday.Option{
-		blackfriday.WithRenderer(renderer),
-		blackfriday.WithExtensions(extensions),
-	}
-
+func renderHtmlConcat(inputs []string, embed bool, opt []blackfriday.Option) (string, error) {
 	html := ""
 	for _, input := range inputs {
 		fi, err := os.Open(input)
