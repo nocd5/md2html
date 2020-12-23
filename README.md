@@ -88,22 +88,18 @@ $ go install
 
 #### Go
 
-- [jessevdk/go-flags](https://github.com/jessevdk/go-flags)
-  ([License](https://github.com/jessevdk/go-flags/blob/master/LICENSE))
-- [russross/blackfriday](https://github.com/russross/blackfriday)
-  ([License](https://github.com/russross/blackfriday/blob/master/LICENSE.txt))
+- [yuin/goldmark](https://github.com/yuin/goldmark)
+  ([License](https://raw.githubusercontent.com/yuin/goldmark/master/LICENSE))
 - [PuerkitoBio/goquery](https://github.com/PuerkitoBio/goquery)
   ([License](https://raw.githubusercontent.com/PuerkitoBio/goquery/master/LICENSE))
+- [jessevdk/go-flags](https://github.com/jessevdk/go-flags)
+  ([License](https://raw.githubusercontent.com/jessevdk/go-flags/master/LICENSE))
 
 #### JS
 
+- [pkra/MathJax-single-file](https://github.com/pkra/MathJax-single-file)
+  ([License](https://raw.githubusercontent.com/pkra/MathJax-single-file/master/LICENSE))
 - [PrismJS/prism](https://github.com/PrismJS/prism)
   ([License](https://raw.githubusercontent.com/PrismJS/prism/master/LICENSE))
 - [cferdinandi/smooth-scroll](https://github.com/cferdinandi/smooth-scroll)
   ([License](https://raw.githubusercontent.com/cferdinandi/smooth-scroll/master/LICENSE.md))
-- [pkra/MathJax-single-file](https://github.com/pkra/MathJax-single-file)
-  ([License](https://raw.githubusercontent.com/pkra/MathJax-single-file/master/LICENSE))
-
-## Acknowledgement
-
-- [mattn/mkup](https://github.com/mattn/mkup)

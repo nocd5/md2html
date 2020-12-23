@@ -9,7 +9,7 @@ func TestReplaceCheckBox0(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed Test %#v", err)
 	}
-	if result != "<li class=\"task-list-item\"><input type=\"checkbox\"/>ab</li>" {
+	if result != "<li class=\"task-list-item\"><input disabled=\"\" type=\"checkbox\"/> ab</li>" {
 		t.Fatalf("Failed Test %#v", result)
 	}
 }
@@ -19,7 +19,7 @@ func TestReplaceCheckBox1(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed Test %#v", err)
 	}
-	if result != "<li class=\"task-list-item\"><input type=\"checkbox\"/></li>" {
+	if result != "<li class=\"task-list-item\"><input disabled=\"\" type=\"checkbox\"/> </li>" {
 		t.Fatalf("Failed Test %#v", result)
 	}
 }
