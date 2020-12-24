@@ -4,8 +4,8 @@ go 1.15
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.0
-	github.com/alecthomas/chroma v0.7.2-0.20200305040604-4f3623dce67a
+	github.com/alecthomas/chroma v0.8.3-0.20201223195406-5b9087ac1446
 	github.com/jessevdk/go-flags v1.4.0
+	github.com/nocd5/goldmark-highlighting v0.0.0-20201224144305-f7ed7f755f7e
 	github.com/yuin/goldmark v1.3.0
-	github.com/yuin/goldmark-highlighting v0.0.0-20200307114337-60d527fdb691
 )
