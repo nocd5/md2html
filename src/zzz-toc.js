@@ -1,19 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
+    var toc = document.getElementById('markdown-toc');
     // if without option "--toc/-t" do nothing
-    if (document.getElementById('markdown-toc') == null) {
+    if (toc == null) {
         return;
     }
 
-    var toc, scroll, button, anchor;
-    toc = document.getElementById('markdown-toc');
     // wrapper for scrollbar on left side
-    scroll = document.createElement('div');
+    var scroll = document.createElement('div');
     scroll.classList.add('scroll');
     // add button element before calling getElementById/getElementsByClassName
-    button = document.createElement('div');
+    var button = document.createElement('div');
     button.classList.add('toc-button');
     // get anchor
-    anchor = document.querySelectorAll('h1,h2,h3,h4');
+    var anchor = document.querySelectorAll('h1,h2,h3,h4');
 
     // generate TOC
     var toclist = document.createElement('ul');
@@ -37,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toc.offsetWidth > 0) {
             button.style.background = config.button.color.active;
             button.style.transform = 'rotate(-45deg)';
-            toc.style.overflowY = 'hidden';
             toc.style.width = 0;
             toc.style.minWidth = 0;
         }
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
             button.style.transform = 'rotate(0)';
             toc.style.width = config.toc.width;
             toc.style.minWidth = config.toc.minwidth;
-            toc.style.overflowY = 'auto';
         }
     }
     document.body.appendChild(button);
