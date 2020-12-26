@@ -280,10 +280,7 @@ func writeHtml(html, title, output string, toc, mathjax bool, favicon string, ta
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
-	if err != nil {
-		return src, err
-	}
+	re_find := regexp.MustCompile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
 	img_tags := re_find.FindAllString(src, -1)
 
 	dest := src
@@ -338,12 +335,9 @@ func decodeBase64(src, parent string) (string, error) {
 }
 
 func parseImageOpt(src string) (string, error) {
-	re, err := regexp.Compile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
-	if err != nil {
-		return src, err
-	}
-
 	dest := src
+
+	re := regexp.MustCompile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
 	dest = re.ReplaceAllStringFunc(dest, func(s string) string {
 		res := re.FindStringSubmatch(s)
 		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
