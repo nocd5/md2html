@@ -266,10 +266,15 @@ func embedImage(src, parent string) (string, error) {
 	}
 	img_tags := re_find.FindAllString(src, -1)
 
+	re_url := regexp.MustCompile(`(?i)^https?://.*`)
+
 	dest := src
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
 
+		if re_url.MatchString(img_src) {
+			continue
+		}
 		b64img, err := decodeBase64(img_src, parent)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
