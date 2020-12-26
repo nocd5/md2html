@@ -280,13 +280,18 @@ func writeHtml(html, title, output string, toc, mathjax bool, favicon string, ta
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find := regexp.MustCompile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
-	img_tags := re_find.FindAllString(src, -1)
-
 	dest := src
+
+	re_find := regexp.MustCompile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
+	re_url := regexp.MustCompile(`(?i)^https?://.*`)
+
+	img_tags := re_find.FindAllString(src, -1)
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
 
+		if re_url.MatchString(img_src) {
+			continue
+		}
 		b64img, err := decodeBase64(img_src, parent)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
