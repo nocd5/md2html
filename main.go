@@ -118,7 +118,8 @@ func main() {
 	)
 
 	if len(opts.OutputFile) > 0 {
-		re := regexp.MustCompile(filepath.Ext(opts.OutputFile) + "$")
+		ext := regexp.QuoteMeta(filepath.Ext(opts.OutputFile))
+		re := regexp.MustCompile(ext + "$")
 		title := filepath.Base(re.ReplaceAllString(opts.OutputFile, ""))
 		html, err := renderHtmlConcat(files, opts.EmbedImage, parser)
 		if err != nil {
