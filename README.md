@@ -90,6 +90,8 @@ $ go install
 
 - [yuin/goldmark](https://github.com/yuin/goldmark)
   ([License](https://raw.githubusercontent.com/yuin/goldmark/master/LICENSE))
+- [yuin/goldmark-highlighting](https://github.com/yuin/goldmark-highlighting)
+  ([License](https://raw.githubusercontent.com/yuin/goldmark-highlighting/master/LICENSE))
 - [PuerkitoBio/goquery](https://github.com/PuerkitoBio/goquery)
   ([License](https://raw.githubusercontent.com/PuerkitoBio/goquery/master/LICENSE))
 - [jessevdk/go-flags](https://github.com/jessevdk/go-flags)
@@ -99,8 +101,6 @@ $ go install
 
 - [pkra/MathJax-single-file](https://github.com/pkra/MathJax-single-file)
   ([License](https://raw.githubusercontent.com/pkra/MathJax-single-file/master/LICENSE))
-- [PrismJS/prism](https://github.com/PrismJS/prism)
-  ([License](https://raw.githubusercontent.com/PrismJS/prism/master/LICENSE))
 - [cferdinandi/smooth-scroll](https://github.com/cferdinandi/smooth-scroll)
   ([License](https://raw.githubusercontent.com/cferdinandi/smooth-scroll/master/LICENSE.md))
 
