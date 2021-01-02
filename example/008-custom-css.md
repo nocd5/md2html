@@ -38,3 +38,5 @@ img.vinyl.lp {
 
 <img class="vinyl ep" src="img/nocd5.png">
 <img class="vinyl lp" src="img/nocd5.png">
+<!-- dummy for avoid .markdown-body > :last-child { margin-bottom: 0 !important; } -->
+<p/>

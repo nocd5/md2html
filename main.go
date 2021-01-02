@@ -1,11 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	chromahtml "github.com/alecthomas/chroma/formatters/html"
 	"github.com/jessevdk/go-flags"
-	"github.com/russross/blackfriday/v2"
+	"github.com/nocd5/goldmark-highlighting"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer"
+	"github.com/yuin/goldmark/renderer/html"
 	"io/ioutil"
 	"mime"
 	"os"
@@ -49,24 +56,29 @@ const (
 `
 	favicon_tag = `<link rel='shortcut icon' href='data:image/x-icon;base64,%s'/>
 `
+)
 
-	commonHtmlFlags = 0 |
-		blackfriday.UseXHTML |
-		blackfriday.Smartypants |
-		blackfriday.SmartypantsFractions |
-		blackfriday.SmartypantsDashes |
-		blackfriday.SmartypantsLatexDashes
-
-	extensions = 0 |
-		blackfriday.NoIntraEmphasis |
-		blackfriday.Tables |
-		blackfriday.FencedCode |
-		blackfriday.Autolink |
-		blackfriday.Strikethrough |
-		blackfriday.AutoHeadingIDs |
-		blackfriday.HeadingIDs |
-		blackfriday.BackslashLineBreak |
-		blackfriday.DefinitionLists
+// goldmark convert options
+var (
+	extensions = []goldmark.Extender{
+		extension.GFM,
+		extension.DefinitionList,
+		extension.Footnote,
+		extension.Typographer,
+		highlighting.NewHighlighting(
+			highlighting.WithStyle("github"),
+			highlighting.WithFormatOptions(
+				chromahtml.WithClasses(true),
+			),
+		),
+	}
+	parseroptions = []parser.Option{
+		parser.WithAutoHeadingID(),
+	}
+	rendereroptions = []renderer.Option{
+		html.WithXHTML(),
+		html.WithUnsafe(),
+	}
 )
 
 func main() {
@@ -99,18 +111,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-		Flags: commonHtmlFlags,
-	})
-	bfopt := []blackfriday.Option{
-		blackfriday.WithRenderer(renderer),
-		blackfriday.WithExtensions(extensions),
-	}
+	parser := goldmark.New(
+		goldmark.WithExtensions(extensions...),
+		goldmark.WithParserOptions(parseroptions...),
+		goldmark.WithRendererOptions(rendereroptions...),
+	)
 
 	if len(opts.OutputFile) > 0 {
-		re := regexp.MustCompile(filepath.Ext(opts.OutputFile) + "$")
+		ext := regexp.QuoteMeta(filepath.Ext(opts.OutputFile))
+		re := regexp.MustCompile(ext + "$")
 		title := filepath.Base(re.ReplaceAllString(opts.OutputFile, ""))
-		html, err := renderHtmlConcat(files, opts.EmbedImage, bfopt)
+		html, err := renderHtmlConcat(files, opts.EmbedImage, parser)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -120,7 +131,7 @@ func main() {
 		}
 	} else {
 		for _, file := range files {
-			html, err := renderHtml(file, opts.EmbedImage, bfopt)
+			html, err := renderHtml(file, opts.EmbedImage, parser)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
@@ -132,7 +143,7 @@ func main() {
 	}
 }
 
-func renderHtml(input string, embed bool, opt []blackfriday.Option) (string, error) {
+func renderHtml(input string, embed bool, parser goldmark.Markdown) (string, error) {
 	fi, err := os.Open(input)
 	if err != nil {
 		return "", err
@@ -143,7 +154,12 @@ func renderHtml(input string, embed bool, opt []blackfriday.Option) (string, err
 	if err != nil {
 		return "", err
 	}
-	html, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+	var buf bytes.Buffer
+	if err := parser.Convert(md, &buf); err != nil {
+		return "", err
+	}
+
+	html, err := parseImageOpt(buf.String())
 	if err != nil {
 		return "", err
 	}
@@ -158,7 +174,7 @@ func renderHtml(input string, embed bool, opt []blackfriday.Option) (string, err
 	return html, nil
 }
 
-func renderHtmlConcat(inputs []string, embed bool, opt []blackfriday.Option) (string, error) {
+func renderHtmlConcat(inputs []string, embed bool, parser goldmark.Markdown) (string, error) {
 	html := ""
 	for _, input := range inputs {
 		fi, err := os.Open(input)
@@ -172,7 +188,12 @@ func renderHtmlConcat(inputs []string, embed bool, opt []blackfriday.Option) (st
 			return "", err
 		}
 
-		h, err := parseImageOpt(string(blackfriday.Run(md, opt...)))
+		var buf bytes.Buffer
+		if err := parser.Convert(md, &buf); err != nil {
+			return "", err
+		}
+
+		h, err := parseImageOpt(buf.String())
 		if err != nil {
 			return "", err
 		}
@@ -260,16 +281,18 @@ func writeHtml(html, title, output string, toc, mathjax bool, favicon string, ta
 }
 
 func embedImage(src, parent string) (string, error) {
-	re_find, err := regexp.Compile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
-	if err != nil {
-		return src, err
-	}
-	img_tags := re_find.FindAllString(src, -1)
-
 	dest := src
+
+	re_find := regexp.MustCompile(`(<img[\S\s]+?src=")([\S\s]+?)("[\S\s]*?/?>)`)
+	re_url := regexp.MustCompile(`(?i)^https?://.*`)
+
+	img_tags := re_find.FindAllString(src, -1)
 	for _, t := range img_tags {
 		img_src := re_find.ReplaceAllString(t, "$2")
 
+		if re_url.MatchString(img_src) {
+			continue
+		}
 		b64img, err := decodeBase64(img_src, parent)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -318,12 +341,9 @@ func decodeBase64(src, parent string) (string, error) {
 }
 
 func parseImageOpt(src string) (string, error) {
-	re, err := regexp.Compile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
-	if err != nil {
-		return src, err
-	}
-
 	dest := src
+
+	re := regexp.MustCompile(`(<img[\S\s]+?src=)"([\S\s]+?)\?(\S+?)"([\S\s]*?/?>)`)
 	dest = re.ReplaceAllStringFunc(dest, func(s string) string {
 		res := re.FindStringSubmatch(s)
 		return res[1] + "\"" + res[2] + "\" " + strings.Join(strings.Split(res[3], "&amp;"), " ") + res[4]
@@ -356,15 +376,11 @@ func replaceCheckBox(src string) (string, error) {
 	doc.Find("li").Each(func(i int, li *goquery.Selection) {
 		li.Contents().Each(func(j int, c *goquery.Selection) {
 			if goquery.NodeName(c) == "#text" {
-				if t := c.Text(); len(t) >= 3 {
-					if t[:3] == "[ ]" {
-						c.ReplaceWithHtml("<input type=\"checkbox\">" + t[3:])
-						li.AddClass("task-list-item")
-					} else if t[:3] == "[x]" {
-						c.ReplaceWithHtml("<input type=\"checkbox\" checked>" + t[3:])
+				li.Find("input").Each(func(k int, input *goquery.Selection) {
+					if t, exist := input.Attr("type"); exist && t == "checkbox" {
 						li.AddClass("task-list-item")
 					}
-				}
+				})
 			}
 		})
 	})
