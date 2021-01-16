@@ -12,7 +12,7 @@ const files = fs.readdirSync(path.join(__dirname, 'assets'))
 files.filter(f => path.extname(f) == '.js').forEach(f => {
   if (path.basename(f).match(/mathjax/i)) {
     if (path.basename(f).match(/config/i)) {
-      mathjax_cfg += '<script type="text/x-mathjax-config">\n';
+      mathjax_cfg += '<script type="text/javascript">\n';
       mathjax_cfg += fs.readFileSync(f, { encoding: 'utf8' });
       mathjax_cfg += '\n</script>\n';
     }
