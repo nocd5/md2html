@@ -13,11 +13,18 @@ This command will create `example.md.html`
 md2html example.md
 ```
 
+## Download
+
+Zipped binaries are available on the [Releases page](https://github.com/nocd5/md2html/releases).
+
+
+This program may be installed using golang's package manager:
+```
+GO111MODULE=on go get github.com/nocd5/md2html
 ```
 
 ## Documentation
 
-`GO111MODULE=on go get github.com/nocd5/md2html`
 Full Documentation: [https://nocd5.github.io/md2html](https://nocd5.github.io/md2html/index.html)
 
 _Note: md2html was used to generate the documentation page:_
