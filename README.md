@@ -3,15 +3,7 @@
 [![Build status](https://github.com/nocd5/md2html/workflows/Build/badge.svg?branch=master)](https://github.com/nocd5/md2html/actions?query=workflow%3ABuild+branch%3Amaster)
 ![Test status](https://github.com/nocd5/md2html/workflows/Test/badge.svg?branch=master)
 
-Markdown to single HTML converter.
-
-## Feature
-
-The **md2html** converts Markdown to a single file HTML.  
-All scripts and css will be embeded in the file  
-and thus the converted file is viewable even offline.  
-Additionally, the **md2html** has option to embed image to HTML by base64 encode  
-and hence the file is conveyable without any resources.
+**md2html generates a single-file HTML document from Markdown.** Scripts, CSS, and images can be all embedded in the HTML, allowing the output file to be viewed offline without requiring any conveyed resources.
 
 ## Sample
 
