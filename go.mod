@@ -1,3 +1,4 @@
+// Deprecated: use github.com/nocd5/md2html/v2
 module github.com/nocd5/md2html
 
 go 1.15
