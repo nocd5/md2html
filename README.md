@@ -25,7 +25,7 @@ $ md2html example/*.md -e -t -m -s -f example/img/nocd5.png -c example/css/custo
 
 ## Installation
 
-`GO111MODULE=on go get github.com/nocd5/md2html`
+`go install github.com/nocd5/md2html/v2@latest`
 
 ## Usage
 
